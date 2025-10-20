@@ -1,0 +1,14 @@
+# MAC thing
+.DS_Store
+
+# my notes :)
+notes.txt
+
+# Remove MAVSDK example
+autopilot_server.cpp
+
+# Build directory
+build
+
+# Settings
+.vscode
