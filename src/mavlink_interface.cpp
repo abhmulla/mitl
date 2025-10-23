@@ -10,12 +10,6 @@
 
 using namespace std::chrono_literals;
 
-MavlinkInterface::MavlinkInterface(std::string url, mavsdk::ComponentType type)
-    : connection_url(std::move(url)),
-      config(type),
-      mavsdk(config),
-      mission_future(mission_prom.get_future()) {}
-
 /// Initialize Drone connection via UDP Port
 bool MavlinkInterface::setup_connection() {
     std::cout << "Connecting to " << connection_url <<'\n';
@@ -28,13 +22,6 @@ bool MavlinkInterface::setup_connection() {
     return (server != nullptr);
 }
 
-void MavlinkInterface::setup_plugins() {
-    param = std::make_unique<mavsdk::ParamServer>(server);
-    telem = std::make_unique<mavsdk::TelemetryServer>(server);
-    action = std::make_unique<mavsdk::ActionServer>(server);
-    mission = std::make_unique<mavsdk::MissionRawServer>(server);
-}
-
 void MavlinkInterface::setup_params() {
     /// PX4-style and custom params
     param->provide_param_int("MIS_TAKEOFF_ALT", 0);
@@ -42,18 +29,25 @@ void MavlinkInterface::setup_params() {
 }
 
 /// TODO: Implement
-void MavlinkInterface::on_takeoff(mavsdk::ActionServer::Result result, bool takeoff) {
-    if (result == mavsdk::ActionServer::Result::Success && takeoff) {
-        pos.relative_altitude_m = 10.f;
+void MavlinkInterface::on_takeoff(mavsdk::ActionServer::Result result, bool in_prog) {
+    if (result == mavsdk::ActionServer::Result::Success && in_prog) {
+        //pos.relative_altitude_m = 10.f;
+        manager->activate_takeoff();
     }
 }
 
 /// TODO: Implement
-void MavlinkInterface::on_land(mavsdk::ActionServer::Result result, bool land) {
-    if (result == mavsdk::ActionServer::Result::Success && land) {
-        pos.relative_altitude_m = 0.f;
+void MavlinkInterface::on_land(mavsdk::ActionServer::Result result, bool in_prog) {
+    if (result == mavsdk::ActionServer::Result::Success && in_prog) {
+        //pos.relative_altitude_m = 0.f;
+        manager->activate_land();
     }
 }
+
+/// TODO: Implement
+// void MavlinkInterface::on_arm_disarm(mavsdk::ActionServer::Result result, bool in_prog) {
+//     manager->arm();
+// }
 
 void MavlinkInterface::setup_actions() {
     action->set_allowable_flight_modes({true, true, true});
@@ -62,6 +56,7 @@ void MavlinkInterface::setup_actions() {
 
     action->subscribe_takeoff([this](auto r, bool b){ this->on_takeoff(r,b); });
     action->subscribe_land([this](auto r, bool b){ this->on_land(r,b); });
+    //action->subscribe_arm_disarm([this](auto r, bool b){this->on_arm_disarm(r,b); });
 }
 
 void MavlinkInterface::on_incoming_mission(mavsdk::MissionRawServer::Result res,
@@ -89,28 +84,28 @@ void MavlinkInterface::setup_mission_server() {
 
 bool MavlinkInterface::start() {
     if (!setup_connection()) return false;
-    setup_plugins();
+    vehicle = std::make_unique<Vehicle>(server);
+    manager = std::make_unique<ModeManager>(*vehicle);
+    action = std::make_unique<mavsdk::ActionServer>(server);
+    param = std::make_unique<mavsdk::ParamServer>(server);
+    mission = std::make_unique<mavsdk::MissionRawServer>(server);
     setup_params();
-    /// seed some telemetry and publish home
-    telem->publish_home(pos);
     setup_actions();
     setup_mission_server();
-
+    manager->initialize_modes();
     running = true;
     return true;
 }
 
 void MavlinkInterface::run() {
+    manager->start();
     while (running) {
-        telem->publish_home(pos);
-        telem->publish_sys_status(battery, true, true, true, true, true);
-        telem->publish_position(pos, vel, hdg);
-        telem->publish_position_velocity_ned(pos_vel);
-        telem->publish_raw_gps(raw_gps, gps_info);
+        vehicle->publish_telem();
         std::this_thread::sleep_for(1s);
     }
 }
 
 void MavlinkInterface::stop() {
+    manager->stop();
     running = false;
 }

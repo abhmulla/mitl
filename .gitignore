@@ -4,11 +4,11 @@
 # my notes :)
 notes.txt
 
-# Remove MAVSDK example
-autopilot_server.cpp
-
 # Build directory
 build
 
 # Settings
 .vscode
+
+# Claude code. I promise I'm not vibe coding.
+.claude

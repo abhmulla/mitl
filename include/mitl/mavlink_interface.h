@@ -2,7 +2,7 @@
  * @file mavlink_interface.h
  * @author Abdulelah Mulla
  * @brief Main header file for MITL
- * @version 0.1
+ * @version 0.2
  * @date 2025-10-19
  */
 
@@ -13,15 +13,22 @@
 #include <iostream>
 #include <thread>
 #include <string>
+#include <memory>
+
+#include "mode_manager.h"
+#include "vehicle.h"
 
 #include <mavsdk/mavsdk.h>
-#include <mavsdk/server_component.h>
 #include <mavsdk/plugins/param_server/param_server.h>
-#include <mavsdk/plugins/telemetry_server/telemetry_server.h>
 #include <mavsdk/plugins/action_server/action_server.h>
 #include <mavsdk/plugins/mission_raw_server/mission_raw_server.h>
 
-
+/**
+ * @brief Mavlink interface for communicating with a GCS
+ * 
+ * This class represents the mavlink API that will be used maintain
+ * communication with a GCS. 
+ */
 class MavlinkInterface {
 private:
 
@@ -40,13 +47,16 @@ private:
     /// Param server plugin to utilize
     std::unique_ptr<mavsdk::ParamServer> param;
 
-    /// Telemetry plugin to utilize
-    std::unique_ptr<mavsdk::TelemetryServer> telem;
-
     /// Action plugin to utilize
     std::unique_ptr<mavsdk::ActionServer> action;
 
-    /// Mission object
+    /// The vehicle object
+    std::unique_ptr<Vehicle> vehicle;
+
+    /// Mode manager
+    std::unique_ptr<ModeManager> manager;
+
+    /// This will allow us to receive missions from a GCS
     std::unique_ptr<mavsdk::MissionRawServer>  mission;
 
     /// Mission sync
@@ -57,26 +67,12 @@ private:
     /// state
     std::atomic<bool> running{false};
 
-    /// HARDCODED FOR NOW
-    mavsdk::TelemetryServer::Position pos{55.953251, -3.188267, 0.f, 0.f};
-    mavsdk::TelemetryServer::PositionVelocityNed pos_vel{{0,0,0},{0,0,0}};
-    mavsdk::TelemetryServer::VelocityNed vel{};
-    mavsdk::TelemetryServer::Heading hdg{60};
-    mavsdk::TelemetryServer::RawGps raw_gps{0,55.953251,-3.188267,0, NAN,NAN,0,NAN,0,0,0,0,0,0};
-    mavsdk::TelemetryServer::GpsInfo gps_info{11, mavsdk::TelemetryServer::FixType::Fix3D};
-    mavsdk::TelemetryServer::Battery battery{};
-
     /**
      * @brief sets up the connection with the GCS
      * 
      * @return true if successful
      */
     bool setup_connection();
-
-    /**
-     * @brief Sets up the various plugins to the server object
-     */
-    void setup_plugins();
 
     /**
      * @brief Sets up the parameters of our vehicle
@@ -101,7 +97,8 @@ private:
      * @brief Callback type for subscribe_takeoff
      * 
      * This function is called by MAVSDK when the vehicle is commanded
-     * to takeoff. 
+     * to takeoff. If this function is called, we know that there is a 
+     * takeoff request.
      * 
      * @param result Possible results returned for action requests
      * @param takeoff whether the takeoff command is still in progress
@@ -112,12 +109,22 @@ private:
      * @brief Callback type for subscribe_land
      * 
      * This function is called by MAVSDK when the vehicle is commanded
-     * to land. 
+     * to land. If this function is called, we know that there is a 
+     * landing request.
      * 
      * @param result Possible results returned for action requests
      * @param takeoff whether the takeoff command is still in progress
      */
     void on_land(mavsdk::ActionServer::Result result, bool land);
+
+    /**
+     * @brief Callback of arming and disarming.
+     * 
+     * This function is called by MAVSDK when the vehicle is commanded
+     * to arm or disarm. If this function is called, we know that there
+     * is a request to arm or disarm the vehicle. 
+     */
+    void on_arm_disarm(mavsdk::ActionServer::Result result, bool land);
 
     /**
      * @brief Callback for receiving mission upload request from GCS
@@ -134,7 +141,11 @@ public:
 
     MavlinkInterface(
         std::string url = "udpout://127.0.0.1:14550",
-        mavsdk::ComponentType type = mavsdk::ComponentType::Autopilot);
+        mavsdk::ComponentType type = mavsdk::ComponentType::Autopilot): 
+        connection_url(std::move(url)),
+        config(type),
+        mavsdk(config),
+        mission_future(mission_prom.get_future()) {}
 
     MavlinkInterface(const MavlinkInterface&) = delete;
 
