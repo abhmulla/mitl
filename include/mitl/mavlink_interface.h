@@ -44,6 +44,9 @@ private:
     /// Server plugin to utilize
     std::shared_ptr<mavsdk::ServerComponent> server;
 
+    /// System instance to utilize
+    std::shared_ptr<mavsdk::System> system;
+
     /// Param server plugin to utilize
     std::unique_ptr<mavsdk::ParamServer> param;
 
@@ -66,6 +69,9 @@ private:
 
     /// state
     std::atomic<bool> running{false};
+
+    /// Dedicated thread for 'running' the vehicle
+    std::thread vehicle_thread;
 
     /**
      * @brief sets up the connection with the GCS
@@ -136,6 +142,13 @@ private:
      */
     void on_incoming_mission(mavsdk::MissionRawServer::Result res,
                              mavsdk::MissionRawServer::MissionPlan plan);
+
+    /**
+     * @brief Performs necessary vehicle functions for the vehicle thread
+     * 
+     * Simply publishes telem and sends heartbeats for now
+     */
+    void vehicle_loop();
 
 public:
 

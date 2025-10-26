@@ -12,6 +12,7 @@
 
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/server_component.h>
+#include <mavsdk/plugins/mavlink_direct/mavlink_direct.h>
 #include <mavsdk/plugins/telemetry_server/telemetry_server.h>
 
 
@@ -35,6 +36,12 @@ private:
     /// Server plugin to utilize
     std::shared_ptr<mavsdk::ServerComponent> server;
 
+    /// System plugin to utilize
+    std::shared_ptr<mavsdk::System> system;
+
+    /// Mavlink direct instance to utilize
+    std::shared_ptr<mavsdk::MavlinkDirect> mavdirect;
+
     /// Telemetry plugin to utilize
     std::unique_ptr<mavsdk::TelemetryServer> telem;
 
@@ -54,9 +61,10 @@ private:
     mavsdk::TelemetryServer::Battery battery{};
 
 public:
-    explicit Vehicle(std::shared_ptr<mavsdk::ServerComponent> server):
-    server(server) {
+    explicit Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_ptr<mavsdk::System> system):
+    server(server), system(system) {
         telem = std::make_unique<mavsdk::TelemetryServer>(server);
+        mavdirect = std::make_unique<mavsdk::MavlinkDirect>(system);
     }
 
     /**
@@ -94,4 +102,9 @@ public:
      * @brief performs necessary operations to hold
      */
     void enter_hold();
+
+    /**
+     * @brief sends a mavlink heartbeat message when calles
+     */
+    void send_heartbeat();
 };

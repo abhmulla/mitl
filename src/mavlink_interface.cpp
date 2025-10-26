@@ -18,8 +18,46 @@ bool MavlinkInterface::setup_connection() {
         std::cerr << "Connection failed: " << res <<'\n';
         return false;
     }
-    server= mavsdk.server_component();
-    return (server != nullptr);
+    server = mavsdk.server_component();
+    /// Wait for system to be discovered
+    std::cout << "Waiting for drone to connect..." << '\n';
+    std::promise<std::shared_ptr<mavsdk::System>> prom;
+    std::future<std::shared_ptr<mavsdk::System>> fut = prom.get_future();
+
+    // Add new temporary callback that gets called upon system add:
+    // (Callback implemented via lambda)
+
+    const mavsdk::Mavsdk::NewSystemHandle handle = mavsdk.subscribe_on_new_system([this, &prom]() {
+        auto systems = mavsdk.systems();
+        std::cout << "Number of systems detected: " << systems.size() << '\n';
+
+        if (!systems.empty()) {
+            system = systems.at(0);
+            prom.set_value(system);
+        } else {
+            std::cout << "No systems found." << '\n';
+            prom.set_value(nullptr);
+        } 
+    });
+
+    // Wait for system to be configured:
+
+    system = fut.get();
+    if (!system) {
+        std::cerr << "Failed to connect to the drone." << '\n';
+        return false;
+    }
+
+    // Remove system callback:
+
+    mavsdk.unsubscribe_on_new_system(handle);
+
+    if (!system->is_connected()) {
+        std::cerr << "System is not connected!" << '\n';
+        return false;
+    }
+
+    return (server != nullptr && system != nullptr);
 }
 
 void MavlinkInterface::setup_params() {
@@ -41,6 +79,14 @@ void MavlinkInterface::on_land(mavsdk::ActionServer::Result result, bool in_prog
     if (result == mavsdk::ActionServer::Result::Success && in_prog) {
         //pos.relative_altitude_m = 0.f;
         manager->activate_land();
+    }
+}
+
+void MavlinkInterface::vehicle_loop() {
+    while (running) {
+        /// 1hz rate
+        vehicle->publish_telem();
+        std::this_thread::sleep_for(1s);
     }
 }
 
@@ -84,14 +130,18 @@ void MavlinkInterface::setup_mission_server() {
 
 bool MavlinkInterface::start() {
     if (!setup_connection()) return false;
-    vehicle = std::make_unique<Vehicle>(server);
+    vehicle = std::make_unique<Vehicle>(server, system);
     manager = std::make_unique<ModeManager>(*vehicle);
     action = std::make_unique<mavsdk::ActionServer>(server);
     param = std::make_unique<mavsdk::ParamServer>(server);
     mission = std::make_unique<mavsdk::MissionRawServer>(server);
+    std::cout<<"Setting up params"<<std::endl;
     setup_params();
+    std::cout<<"Setting up action"<<std::endl;
     setup_actions();
+    std::cout<<"Setting up mission"<<std::endl;
     setup_mission_server();
+    std::cout<<"Setting up modes"<<std::endl;
     manager->initialize_modes();
     running = true;
     return true;
@@ -99,13 +149,13 @@ bool MavlinkInterface::start() {
 
 void MavlinkInterface::run() {
     manager->start();
-    while (running) {
-        vehicle->publish_telem();
-        std::this_thread::sleep_for(1s);
-    }
+    vehicle_thread = std::thread(&MavlinkInterface::vehicle_loop, this);
 }
 
 void MavlinkInterface::stop() {
     manager->stop();
     running = false;
+    if (vehicle_thread.joinable()) {
+          vehicle_thread.join();
+    }
 }

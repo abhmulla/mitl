@@ -33,8 +33,15 @@ int main() {
     });
 
     std::cout << "starting..." << std::endl;
-    mav_interface.start();
-    
+    if (!mav_interface.start()) {
+        std::cerr << "Failed to start mavlink interface!" << std::endl;
+        stop_requested = true;
+        if (input_thread.joinable()) {
+            input_thread.detach();
+        }
+        return 1;
+    }
+
     std::cout << "running! Press 'q' to stop." << std::endl;
     mav_interface.run();
 
