@@ -25,6 +25,7 @@
 #include "mode/landmode.h"
 
 #include <mavsdk/mavsdk.h>
+#include <mavsdk/plugins/action_server/action_server.h>
 #include <mavsdk/plugins/telemetry_server/telemetry_server.h>
 
 /**
@@ -51,6 +52,9 @@ private:
 
     /// Vehicle instance to utilize
     Vehicle& vehicle;
+
+    /// Action server instance to utilize
+    mavsdk::ActionServer& action;
 
     /// Control thread running flag
     std::atomic<bool> running;
@@ -109,10 +113,30 @@ private:
      */
     ModeType get_next_mode(ModeType current);
 
+    /**
+     * @brief map FlightMode enum to our ModeType
+     * 
+     * Used to simplify internal mode switching operations
+     * 
+     * @return The corresponding modetype
+     */
+    ModeType to_modetype(mavsdk::ActionServer::FlightMode mode);
+
+    /**
+     * @brief Maps our custom modes to the FlightMode enum for mavlink communication
+     * 
+     * MAVSDK internally uses px4's custom modes, so we map our mode's to 
+     * action server's Flight mode enum, which is then handled internally by MAVSDK 
+     * with the px4's custom modes.
+     * 
+     * @return the matching px4 custom mode
+     */
+    mavsdk::ActionServer::FlightMode to_action_server_mode(ModeType mode) const;
+
 public:
 
-    explicit ModeManager(Vehicle& vehicle) :
-     vehicle(vehicle) {}
+    explicit ModeManager(Vehicle& vehicle, mavsdk::ActionServer& action) :
+     vehicle(vehicle), action(action) {}
 
     ~ModeManager();
 
@@ -140,10 +164,10 @@ public:
      * Validates the transition, exits current mode,
      * and enters the new mode
      * 
-     * @param new_mode_type The mode to switch to
+     * @param mode The mode to switch to
      * @return true if transition successful
      */
-    bool change_mode(ModeType new_mode_type);
+    bool change_mode(mavsdk::ActionServer::FlightMode mode);
 
     /**
      * @brief Performs the takeoff operations

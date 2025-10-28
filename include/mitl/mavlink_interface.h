@@ -73,6 +73,8 @@ private:
     /// Dedicated thread for 'running' the vehicle
     std::thread vehicle_thread;
 
+    std::atomic<bool> armed{false};
+
     /**
      * @brief sets up the connection with the GCS
      * 
@@ -130,7 +132,7 @@ private:
      * to arm or disarm. If this function is called, we know that there
      * is a request to arm or disarm the vehicle. 
      */
-    void on_arm_disarm(mavsdk::ActionServer::Result result, bool land);
+    void on_arm_disarm(mavsdk::ActionServer::Result result, mavsdk::ActionServer::ArmDisarm arm_disarm);
 
     /**
      * @brief Callback for receiving mission upload request from GCS
@@ -140,8 +142,12 @@ private:
      * @param result Tells you whether receiving the mission was successful
      * @param plan Contains the mission uploaded by the GCS
      */
-    void on_incoming_mission(mavsdk::MissionRawServer::Result res,
-                             mavsdk::MissionRawServer::MissionPlan plan);
+    void on_incoming_mission(mavsdk::MissionRawServer::Result res, mavsdk::MissionRawServer::MissionPlan plan);
+    
+    /**
+     * @brief Callback for receiving mode change requests from the GCS
+     */
+    void on_mode_change(mavsdk::ActionServer::Result res, mavsdk::ActionServer::FlightMode mode);
 
     /**
      * @brief Performs necessary vehicle functions for the vehicle thread

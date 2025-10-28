@@ -19,6 +19,8 @@ bool MavlinkInterface::setup_connection() {
         return false;
     }
     server = mavsdk.server_component();
+    /// HARDCODED FOR NOW
+    server->set_system_status(MAV_STATE_ACTIVE);
     /// Wait for system to be discovered
     std::cout << "Waiting for drone to connect..." << '\n';
     std::promise<std::shared_ptr<mavsdk::System>> prom;
@@ -68,7 +70,7 @@ void MavlinkInterface::setup_params() {
 
 /// TODO: Implement
 void MavlinkInterface::on_takeoff(mavsdk::ActionServer::Result result, bool in_prog) {
-    if (result == mavsdk::ActionServer::Result::Success && in_prog) {
+    if (result == mavsdk::ActionServer::Result::Success) {
         //pos.relative_altitude_m = 10.f;
         manager->activate_takeoff();
     }
@@ -76,10 +78,14 @@ void MavlinkInterface::on_takeoff(mavsdk::ActionServer::Result result, bool in_p
 
 /// TODO: Implement
 void MavlinkInterface::on_land(mavsdk::ActionServer::Result result, bool in_prog) {
-    if (result == mavsdk::ActionServer::Result::Success && in_prog) {
+    if (result == mavsdk::ActionServer::Result::Success) {
         //pos.relative_altitude_m = 0.f;
         manager->activate_land();
     }
+}
+
+void MavlinkInterface::on_mode_change(mavsdk::ActionServer::Result res, mavsdk::ActionServer::FlightMode mode) {
+    manager->change_mode(mode);
 }
 
 void MavlinkInterface::vehicle_loop() {
@@ -90,19 +96,40 @@ void MavlinkInterface::vehicle_loop() {
     }
 }
 
-/// TODO: Implement
-// void MavlinkInterface::on_arm_disarm(mavsdk::ActionServer::Result result, bool in_prog) {
-//     manager->arm();
-// }
+void MavlinkInterface::on_arm_disarm(mavsdk::ActionServer::Result result, mavsdk::ActionServer::ArmDisarm arm_disarm) {
+    if (result == mavsdk::ActionServer::Result::Success) {
+        if(arm_disarm.arm) {
+            std::cout << "[MavlinkInterface] Arming requested" << std::endl;
+            vehicle->arm();
+            /// Update state to indicate we're armed
+            armed.store(true);
+            action->set_allow_takeoff(true);
+        } else {
+            std::cout << "[MavlinkInterface] Disarming requested" << std::endl;
+            vehicle->disarm();
+            armed.store(false);
+            action->set_allow_takeoff(false);
+        }
+    } else {
+        std::cout << "[MavlinkInterface] Arm/Disarm request failed: " << result << std::endl;
+        armed.store(false);
+    }
+}
 
 void MavlinkInterface::setup_actions() {
     action->set_allowable_flight_modes({true, true, true});
-    action->set_allow_takeoff(true);
     action->set_armable(true, true);
+    action->set_disarmable(true, true);
+    action->set_armed_state(armed);
+    action->set_allow_takeoff(false);
 
     action->subscribe_takeoff([this](auto r, bool b){ this->on_takeoff(r,b); });
     action->subscribe_land([this](auto r, bool b){ this->on_land(r,b); });
-    //action->subscribe_arm_disarm([this](auto r, bool b){this->on_arm_disarm(r,b); });
+    action->subscribe_flight_mode_change([this](mavsdk::ActionServer::Result result, mavsdk::ActionServer::FlightMode mode) {
+                  on_mode_change(result, mode);
+              });
+    action->subscribe_arm_disarm([this](mavsdk::ActionServer::Result result, mavsdk::ActionServer::ArmDisarm arm_disarm){
+        this->on_arm_disarm(result,arm_disarm); });
 }
 
 void MavlinkInterface::on_incoming_mission(mavsdk::MissionRawServer::Result res,
@@ -131,8 +158,8 @@ void MavlinkInterface::setup_mission_server() {
 bool MavlinkInterface::start() {
     if (!setup_connection()) return false;
     vehicle = std::make_unique<Vehicle>(server, system);
-    manager = std::make_unique<ModeManager>(*vehicle);
     action = std::make_unique<mavsdk::ActionServer>(server);
+    manager = std::make_unique<ModeManager>(*vehicle, *action);
     param = std::make_unique<mavsdk::ParamServer>(server);
     mission = std::make_unique<mavsdk::MissionRawServer>(server);
     std::cout<<"Setting up params"<<std::endl;

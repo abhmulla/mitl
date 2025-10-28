@@ -120,6 +120,40 @@ ModeType ModeManager::get_next_mode(ModeType current) {
     }
 }
 
+ModeType ModeManager::to_modetype(mavsdk::ActionServer::FlightMode mode) {
+    switch(mode) {
+        case mavsdk::ActionServer::FlightMode::Ready:
+            return ModeType::Ground;
+        case mavsdk::ActionServer::FlightMode::Takeoff:
+            return ModeType::Hold;
+        case mavsdk::ActionServer::FlightMode::Hold:
+            return ModeType::Hold;
+        case mavsdk::ActionServer::FlightMode::Mission:
+            return ModeType::Heading;
+        case mavsdk::ActionServer::FlightMode::Land:
+            return ModeType::Land;
+        default:
+            return ModeType::Ground; // we don't have unknown for now
+    }
+}
+
+mavsdk::ActionServer::FlightMode ModeManager::to_action_server_mode(ModeType mode) const {
+    switch(mode) {
+        case ModeType::Ground:
+            return mavsdk::ActionServer::FlightMode::Ready;
+        case ModeType::Takeoff:
+            return mavsdk::ActionServer::FlightMode::Takeoff;
+        case ModeType::Hold:
+            return mavsdk::ActionServer::FlightMode::Hold;
+        case ModeType::Heading:
+            return mavsdk::ActionServer::FlightMode::Mission;
+        case ModeType::Land:
+            return mavsdk::ActionServer::FlightMode::Land;
+        default:
+            return mavsdk::ActionServer::FlightMode::Unknown;
+    }
+}
+
 bool ModeManager::change_mode_internal(ModeType new_mode_type) {
     /// Check if mode exists
     if (modes.find(new_mode_type) == modes.end()) {
@@ -133,12 +167,15 @@ bool ModeManager::change_mode_internal(ModeType new_mode_type) {
     if (curr_mode != nullptr) {
         curr_mode->exit();
     }
+    mavsdk::ActionServer::FlightMode new_mode = to_action_server_mode(new_mode_type);
+    action.set_flight_mode(new_mode);
     curr_mode = modes[new_mode_type].get();
     curr_mode->enter();
     return true;
 }
 
-bool ModeManager::change_mode(ModeType new_mode_type) {
+bool ModeManager::change_mode(mavsdk::ActionServer::FlightMode mode) {
+    ModeType new_mode_type = to_modetype(mode);
     std::lock_guard<std::mutex> lock(mutex);
     return change_mode_internal(new_mode_type);
 }

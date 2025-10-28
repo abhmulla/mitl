@@ -10,8 +10,11 @@
 
 #include <memory>
 
+#include "mode/mode.h"
+
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/server_component.h>
+#include <mavsdk/plugins/action_server/action_server.h>
 #include <mavsdk/plugins/mavlink_direct/mavlink_direct.h>
 #include <mavsdk/plugins/telemetry_server/telemetry_server.h>
 
@@ -51,6 +54,9 @@ private:
     /// Flag indicating if the vehicle is armed
     bool armed = false;
 
+    /// The current mode this vehicle is in
+    ModeType curr_mode;
+
     /// HARDCODED FOR NOW
     mavsdk::TelemetryServer::Position pos{55.953251, -3.188267, 0.f, 0.f};
     mavsdk::TelemetryServer::PositionVelocityNed pos_vel{{0,0,0},{0,0,0}};
@@ -71,6 +77,11 @@ public:
      * @brief arm the vehicle
      */
     void arm();
+
+    /**
+     * @brief disarm the vehicle
+     */
+    void disarm();
 
     /**
      * @brief Let's us know if the vehicle is armed
@@ -106,5 +117,5 @@ public:
     /**
      * @brief sends a mavlink heartbeat message when calles
      */
-    void send_heartbeat();
+    // void send_heartbeat();
 };

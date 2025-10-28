@@ -8,7 +8,8 @@
 
 #pragma once
 
-#include "vehicle/vehicle.h"
+/// Forward declaration
+class Vehicle;
 
 /**
  * @brief Enums of the possible mode types

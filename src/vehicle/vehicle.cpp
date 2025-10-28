@@ -26,22 +26,28 @@ void Vehicle::arm() {
     arming_in_progress = false;
 }
 
-void Vehicle::send_heartbeat() {
-    mavsdk::MavlinkDirect::MavlinkMessage heartbeat;
-    heartbeat.message_name = "HEARTBEAT";
-    heartbeat.system_id = 1; // do this later
-    heartbeat.component_id = server->component_id();
-    heartbeat.target_system_id = 0;
-    heartbeat.target_component_id = 0;
-    heartbeat.fields_json = R"({
-          "type": 2,
-          "autopilot": 0,
-          "base_mode": 0,
-          "custom_mode": 0,
-          "system_status": 4
-      })";
-    auto result = mavdirect->send_message(heartbeat);
+void Vehicle::disarm() {
+    std::cout << "[Vehicle] Disarming requested" << std::endl;
+    /// TODO: disarm the vehicle
+    armed = false;
 }
+
+// void Vehicle::send_heartbeat() {
+//     mavsdk::MavlinkDirect::MavlinkMessage heartbeat;
+//     heartbeat.message_name = "HEARTBEAT";
+//     heartbeat.system_id = 1; // do this later
+//     heartbeat.component_id = server->component_id();
+//     heartbeat.target_system_id = 0;
+//     heartbeat.target_component_id = 0;
+//     heartbeat.fields_json = R"({
+//           "type": 2,
+//           "autopilot": 0,
+//           "base_mode": 0,
+//           "custom_mode": 0,
+//           "system_status": 4
+//       })";
+//     auto result = mavdirect->send_message(heartbeat);
+// }
 
 void Vehicle::publish_telem() {
     telem->publish_home(pos);
@@ -49,7 +55,6 @@ void Vehicle::publish_telem() {
     telem->publish_position(pos, vel, hdg);
     telem->publish_position_velocity_ned(pos_vel);
     telem->publish_raw_gps(raw_gps, gps_info);
-    send_heartbeat();
 }
 
 /// TODO: Implement
