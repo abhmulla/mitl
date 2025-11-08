@@ -70,7 +70,9 @@ void MavlinkInterface::setup_params() {
 
 /// TODO: Implement
 void MavlinkInterface::on_takeoff(mavsdk::ActionServer::Result result, bool in_prog) {
+    std::cout << "HERE: A" << std::endl;
     if (result == mavsdk::ActionServer::Result::Success) {
+        std::cout<< "HERE: B" << std::endl;
         //pos.relative_altitude_m = 10.f;
         manager->activate_takeoff();
     }
@@ -103,12 +105,10 @@ void MavlinkInterface::on_arm_disarm(mavsdk::ActionServer::Result result, mavsdk
             vehicle->arm();
             /// Update state to indicate we're armed
             armed.store(true);
-            action->set_allow_takeoff(true);
         } else {
             std::cout << "[MavlinkInterface] Disarming requested" << std::endl;
             vehicle->disarm();
             armed.store(false);
-            action->set_allow_takeoff(false);
         }
     } else {
         std::cout << "[MavlinkInterface] Arm/Disarm request failed: " << result << std::endl;
@@ -121,7 +121,7 @@ void MavlinkInterface::setup_actions() {
     action->set_armable(true, true);
     action->set_disarmable(true, true);
     action->set_armed_state(armed);
-    action->set_allow_takeoff(false);
+    action->set_allow_takeoff(true);
 
     action->subscribe_takeoff([this](auto r, bool b){ this->on_takeoff(r,b); });
     action->subscribe_land([this](auto r, bool b){ this->on_land(r,b); });

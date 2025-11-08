@@ -58,7 +58,7 @@ private:
     ModeType curr_mode;
 
     /// HARDCODED FOR NOW
-    mavsdk::TelemetryServer::Position pos{55.953251, -3.188267, 0.f, 0.f};
+    mavsdk::TelemetryServer::Position pos{42.7161389, -84.50325, 0.f, 0.f};
     mavsdk::TelemetryServer::PositionVelocityNed pos_vel{{0,0,0},{0,0,0}};
     mavsdk::TelemetryServer::VelocityNed vel{};
     mavsdk::TelemetryServer::Heading hdg{60};

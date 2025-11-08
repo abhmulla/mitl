@@ -73,8 +73,9 @@ private:
     /// Dedicated thread for 'running' the vehicle
     std::thread vehicle_thread;
 
+    /// Flag indicating that the vehicle is armed
     std::atomic<bool> armed{false};
-
+    
     /**
      * @brief sets up the connection with the GCS
      * 

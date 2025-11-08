@@ -5,7 +5,7 @@ project(mitlex)
 # Define files to be compiled
 set(MISC_FILES
     main.cpp
-    autopilot_example.cpp
+    Takeoff.cpp
 )
 
 # Build and link all executables:
