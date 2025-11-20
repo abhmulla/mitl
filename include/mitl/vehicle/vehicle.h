@@ -11,13 +11,13 @@
 #include <memory>
 
 #include "mode/mode.h"
+#include "controller.h"
 
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/server_component.h>
 #include <mavsdk/plugins/action_server/action_server.h>
 #include <mavsdk/plugins/mavlink_direct/mavlink_direct.h>
 #include <mavsdk/plugins/telemetry_server/telemetry_server.h>
-
 
 /**
  * @brief The states our vehicle can be in
@@ -57,7 +57,10 @@ private:
     /// The current mode this vehicle is in
     ModeType curr_mode;
 
-    /// HARDCODED FOR NOW
+    /// Pointer to the controller object
+    std::unique_ptr<Controller> controller;
+
+    /// Vehicle State, HARDCODED FOR NOW
     mavsdk::TelemetryServer::Position pos{42.7161389, -84.50325, 0.f, 0.f};
     mavsdk::TelemetryServer::PositionVelocityNed pos_vel{{0,0,0},{0,0,0}};
     mavsdk::TelemetryServer::VelocityNed vel{};
@@ -115,7 +118,12 @@ public:
     void enter_hold();
 
     /**
-     * @brief sends a mavlink heartbeat message when calles
+     * @brief Updates the current mode of the vehicle
+     *
+     * This is called by the ModeManager when the mode changes
+     * so that telemetry can be published correctly
+     *
+     * @param mode The new mode
      */
-    // void send_heartbeat();
+    void set_mode(ModeType mode);
 };

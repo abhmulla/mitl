@@ -66,7 +66,7 @@ private:
     std::mutex mutex;
 
     /// The control rate we will be running at
-    int CONTROL_RATE = 50;
+    const int CONTROL_RATE = 50;
     std::chrono::milliseconds CONTROL_PERIOD = std::chrono::milliseconds(1000/CONTROL_RATE);
 
     /**

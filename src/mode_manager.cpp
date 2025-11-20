@@ -4,6 +4,7 @@
  */
 
 #include "mode_manager.h"
+#include "vehicle/controller.h"
 #include <iostream>
 
 
@@ -24,7 +25,13 @@ void ModeManager::initialize_modes() {
 
     /// Start in Ground mode
     curr_mode = modes[ModeType::Ground].get();
-    curr_mode->enter();
+/// TODO:
+
+    //curr_mode->enter();
+    //navigator->enter(curr_mode)
+
+    /// Update vehicle's mode for telemetry
+    vehicle.set_mode(ModeType::Ground);
 
     std::cout << "[ModeManager] All modes initialized, starting in Ground mode" << std::endl;
 }
@@ -171,6 +178,8 @@ bool ModeManager::change_mode_internal(ModeType new_mode_type) {
     action.set_flight_mode(new_mode);
     curr_mode = modes[new_mode_type].get();
     curr_mode->enter();
+    /// Update vehicle's mode for telemetry
+    vehicle.set_mode(new_mode_type);
     return true;
 }
 

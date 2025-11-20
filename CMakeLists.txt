@@ -14,6 +14,7 @@ find_package(MAVSDK REQUIRED)
 add_library(${PROJECT_NAME} STATIC
     src/mavlink_interface.cpp
     src/mode_manager.cpp
+    src/navigator.cpp
     src/modes/mode.cpp
     src/modes/groundmode.cpp
     src/modes/takeoffmode.cpp
@@ -21,6 +22,7 @@ add_library(${PROJECT_NAME} STATIC
     src/modes/headingmode.cpp
     src/modes/landmode.cpp
     src/vehicle/vehicle.cpp
+    src/vehicle/controller.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

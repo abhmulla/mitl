@@ -10,6 +10,12 @@ ModeType TakeOffMode::get_type() const {
     return ModeType::Takeoff;
 }
 
+/**
+ * @brief This functions sets up the take off mode
+ * 
+ * Take off can only be performed when the vehicle is grounded,
+ * so this function simply 'turns on' the motors.
+ */
 void TakeOffMode::enter() {
     std::cout << "[TakeOffMode] Entering takeoff mode" << std::endl;
     // TODO: Implement actual takeoff logic

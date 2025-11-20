@@ -32,29 +32,33 @@ void Vehicle::disarm() {
     armed = false;
 }
 
-// void Vehicle::send_heartbeat() {
-//     mavsdk::MavlinkDirect::MavlinkMessage heartbeat;
-//     heartbeat.message_name = "HEARTBEAT";
-//     heartbeat.system_id = 1; // do this later
-//     heartbeat.component_id = server->component_id();
-//     heartbeat.target_system_id = 0;
-//     heartbeat.target_component_id = 0;
-//     heartbeat.fields_json = R"({
-//           "type": 2,
-//           "autopilot": 0,
-//           "base_mode": 0,
-//           "custom_mode": 0,
-//           "system_status": 4
-//       })";
-//     auto result = mavdirect->send_message(heartbeat);
-// }
-
 void Vehicle::publish_telem() {
     telem->publish_home(pos);
     telem->publish_sys_status(battery, true, true, true, true, true);
     telem->publish_position(pos, vel, hdg);
     telem->publish_position_velocity_ned(pos_vel);
     telem->publish_raw_gps(raw_gps, gps_info);
+
+    /// Publish landed state
+    mavsdk::TelemetryServer::LandedState landed_state;
+    switch(curr_mode) {
+        case ModeType::Ground:
+            landed_state = mavsdk::TelemetryServer::LandedState::OnGround;
+            break;
+        case ModeType::Takeoff:
+            landed_state = mavsdk::TelemetryServer::LandedState::TakingOff;
+            break;
+        case ModeType::Land:
+            landed_state = mavsdk::TelemetryServer::LandedState::Landing;
+            break;
+        case ModeType::Hold:
+        case ModeType::Heading:
+            landed_state = mavsdk::TelemetryServer::LandedState::InAir;
+            break;
+        default:
+            landed_state = mavsdk::TelemetryServer::LandedState::Unknown;
+    }
+    telem->publish_extended_sys_state(mavsdk::TelemetryServer::VtolState::Mc, landed_state);
 }
 
 /// TODO: Implement
@@ -65,4 +69,8 @@ void Vehicle::takeoff() {
 /// TODO: Implement
 void Vehicle::enter_hold() {
 
+}
+
+void Vehicle::set_mode(ModeType mode) {
+    curr_mode = mode;
 }

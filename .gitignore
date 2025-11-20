@@ -10,8 +10,5 @@ build
 # Settings
 .vscode
 
-# Claude code. I promise I'm not vibe coding.
-.claude
-
 # MAVSDK example
 autopilot_example.cpp
