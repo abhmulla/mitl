@@ -33,48 +33,48 @@ class MavlinkInterface {
 private:
 
     /// Connection URL to utilize
-    std::string connection_url = "udpout://127.0.0.1:14550";
+    std::string _connection_url = "udpout://127.0.0.1:14550";
 
     /// MAVSDK configuration instance
-    mavsdk::Mavsdk::Configuration config;
+    mavsdk::Mavsdk::Configuration _config;
 
     /// MAVSDK instance to utilize
-    mavsdk::Mavsdk mavsdk;
+    mavsdk::Mavsdk _mavsdk;
 
     /// Server plugin to utilize
-    std::shared_ptr<mavsdk::ServerComponent> server;
+    std::shared_ptr<mavsdk::ServerComponent> _server;
 
     /// System instance to utilize
-    std::shared_ptr<mavsdk::System> system;
+    std::shared_ptr<mavsdk::System> _system;
 
     /// Param server plugin to utilize
-    std::unique_ptr<mavsdk::ParamServer> param;
+    std::unique_ptr<mavsdk::ParamServer> _param;
 
     /// Action plugin to utilize
-    std::unique_ptr<mavsdk::ActionServer> action;
+    std::unique_ptr<mavsdk::ActionServer> _action;
 
     /// The vehicle object
-    std::unique_ptr<Vehicle> vehicle;
+    std::unique_ptr<Vehicle> _vehicle;
 
     /// Mode manager
-    std::unique_ptr<ModeManager> manager;
+    std::unique_ptr<ModeManager> _manager;
 
     /// This will allow us to receive missions from a GCS
-    std::unique_ptr<mavsdk::MissionRawServer>  mission;
+    std::unique_ptr<mavsdk::MissionRawServer>  _mission;
 
     /// Mission sync
-    std::promise<mavsdk::MissionRawServer::MissionPlan> mission_prom;
-    std::future<mavsdk::MissionRawServer::MissionPlan> mission_future;
-    mavsdk::MissionRawServer::IncomingMissionHandle mission_handle{};
+    std::promise<mavsdk::MissionRawServer::MissionPlan> _mission_prom;
+    std::future<mavsdk::MissionRawServer::MissionPlan> _mission_future;
+    mavsdk::MissionRawServer::IncomingMissionHandle _mission_handle{};
 
     /// state
-    std::atomic<bool> running{false};
+    std::atomic<bool> _running{false};
 
     /// Dedicated thread for 'running' the vehicle
-    std::thread vehicle_thread;
+    std::thread _vehicle_thread;
 
     /// Flag indicating that the vehicle is armed
-    std::atomic<bool> armed{false};
+    std::atomic<bool> _armed{false};
     
     /**
      * @brief sets up the connection with the GCS
@@ -162,10 +162,10 @@ public:
     MavlinkInterface(
         std::string url = "udpout://127.0.0.1:14550",
         mavsdk::ComponentType type = mavsdk::ComponentType::Autopilot): 
-        connection_url(std::move(url)),
-        config(type),
-        mavsdk(config),
-        mission_future(mission_prom.get_future()) {}
+        _connection_url(std::move(url)),
+        _config(type),
+        _mavsdk(_config),
+        _mission_future(_mission_prom.get_future()) {}
 
     MavlinkInterface(const MavlinkInterface&) = delete;
 

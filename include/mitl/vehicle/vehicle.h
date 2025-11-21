@@ -22,43 +22,43 @@ class Vehicle {
 private:
 
     /// Server plugin to utilize
-    std::shared_ptr<mavsdk::ServerComponent> server;
+    std::shared_ptr<mavsdk::ServerComponent> _server;
 
     /// System plugin to utilize
-    std::shared_ptr<mavsdk::System> system;
+    std::shared_ptr<mavsdk::System> _system;
 
     /// Mavlink direct instance to utilize
-    std::shared_ptr<mavsdk::MavlinkDirect> mavdirect;
+    std::shared_ptr<mavsdk::MavlinkDirect> _mavdirect;
 
     /// Telemetry plugin to utilize
-    std::unique_ptr<mavsdk::TelemetryServer> telem;
+    std::unique_ptr<mavsdk::TelemetryServer> _telem;
 
     /// Flag indicating if arming is in progress
-    bool arming_in_progress = false;
+    bool _arming_in_progress = false;
 
     /// Flag indicating if the vehicle is armed
-    bool armed = false;
+    bool _armed = false;
 
     /// The current mode this vehicle is in
-    mavsdk::ActionServer::FlightMode curr_mode;
+    mavsdk::ActionServer::FlightMode _curr_mode;
 
     /// Pointer to the controller object
-    std::unique_ptr<Controller> controller;
+    std::unique_ptr<Controller> _controller;
 
     /// Vehicle State, HARDCODED FOR NOW
-    mavsdk::TelemetryServer::Position pos{42.7161389, -84.50325, 0.f, 0.f};
-    mavsdk::TelemetryServer::PositionVelocityNed pos_vel{{0,0,0},{0,0,0}};
-    mavsdk::TelemetryServer::VelocityNed vel{};
-    mavsdk::TelemetryServer::Heading hdg{60};
-    mavsdk::TelemetryServer::RawGps raw_gps{0,55.953251,-3.188267,0, NAN,NAN,0,NAN,0,0,0,0,0,0};
-    mavsdk::TelemetryServer::GpsInfo gps_info{11, mavsdk::TelemetryServer::FixType::Fix3D};
-    mavsdk::TelemetryServer::Battery battery{};
+    mavsdk::TelemetryServer::Position _pos{42.7161389, -84.50325, 0.f, 0.f};
+    mavsdk::TelemetryServer::PositionVelocityNed _pos_vel{{0,0,0},{0,0,0}};
+    mavsdk::TelemetryServer::VelocityNed _vel{};
+    mavsdk::TelemetryServer::Heading _hdg{60};
+    mavsdk::TelemetryServer::RawGps _raw_gps{0,55.953251,-3.188267,0, NAN,NAN,0,NAN,0,0,0,0,0,0};
+    mavsdk::TelemetryServer::GpsInfo _gps_info{11, mavsdk::TelemetryServer::FixType::Fix3D};
+    mavsdk::TelemetryServer::Battery _battery{};
 
 public:
     explicit Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_ptr<mavsdk::System> system):
-    server(server), system(system) {
-        telem = std::make_unique<mavsdk::TelemetryServer>(server);
-        mavdirect = std::make_unique<mavsdk::MavlinkDirect>(system);
+    _server(server), _system(system) {
+        _telem = std::make_unique<mavsdk::TelemetryServer>(server);
+        _mavdirect = std::make_unique<mavsdk::MavlinkDirect>(system);
     }
 
     /**

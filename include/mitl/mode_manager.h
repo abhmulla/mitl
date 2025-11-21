@@ -39,29 +39,29 @@
 class ModeManager {
 private:
     /// The mode we are currently on
-    mavsdk::ActionServer::FlightMode curr_mode;
+    mavsdk::ActionServer::FlightMode _curr_mode;
 
     /// Vehicle instance to utilize
-    Vehicle& vehicle;
+    Vehicle& _vehicle;
 
     /// Navigator instance to utilize
-    Navigator _navigator;
+    // Navigator _navigator;
 
     /// Action server instance to utilize
-    mavsdk::ActionServer& action;
+    mavsdk::ActionServer& _action;
 
     /// Control thread running flag
-    std::atomic<bool> running;
+    std::atomic<bool> _running;
 
     /// Dedicated control loop thread
-    std::thread control_thread;
+    std::thread _control_thread;
 
     /// Thread safety lock
-    std::mutex mutex;
+    std::mutex _mutex;
 
     /// The control rate we will be running at
-    const int CONTROL_RATE = 50;
-    std::chrono::milliseconds CONTROL_PERIOD = std::chrono::milliseconds(1000/CONTROL_RATE);
+    const int _CONTROL_RATE = 50;
+    std::chrono::milliseconds _CONTROL_PERIOD = std::chrono::milliseconds(1000/_CONTROL_RATE);
 
     /**
      * @brief Verifies mode transitions
@@ -110,7 +110,7 @@ private:
 public:
 
     explicit ModeManager(Vehicle& vehicle, mavsdk::ActionServer& action) :
-     vehicle(vehicle), action(action) {}
+     _vehicle(vehicle), _action(action) {}
 
     ~ModeManager();
 
