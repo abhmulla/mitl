@@ -42,17 +42,17 @@ void Vehicle::publish_telem() {
     /// Publish landed state
     mavsdk::TelemetryServer::LandedState landed_state;
     switch(curr_mode) {
-        case ModeType::Ground:
+        case mavsdk::ActionServer::FlightMode::Ready:
             landed_state = mavsdk::TelemetryServer::LandedState::OnGround;
             break;
-        case ModeType::Takeoff:
+        case mavsdk::ActionServer::FlightMode::Takeoff:
             landed_state = mavsdk::TelemetryServer::LandedState::TakingOff;
             break;
-        case ModeType::Land:
+        case mavsdk::ActionServer::FlightMode::Land:
             landed_state = mavsdk::TelemetryServer::LandedState::Landing;
             break;
-        case ModeType::Hold:
-        case ModeType::Heading:
+        case mavsdk::ActionServer::FlightMode::Hold:
+        case mavsdk::ActionServer::FlightMode::Mission:
             landed_state = mavsdk::TelemetryServer::LandedState::InAir;
             break;
         default:
@@ -71,6 +71,6 @@ void Vehicle::enter_hold() {
 
 }
 
-void Vehicle::set_mode(ModeType mode) {
+void Vehicle::set_mode(mavsdk::ActionServer::FlightMode mode) {
     curr_mode = mode;
 }

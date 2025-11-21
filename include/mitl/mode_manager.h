@@ -17,12 +17,7 @@
 #include <unordered_map>
 
 #include "vehicle/vehicle.h"
-#include "mode/mode.h"
-#include "mode/groundmode.h"
-#include "mode/takeoffmode.h"
-#include "mode/holdmode.h"
-#include "mode/headingmode.h"
-#include "mode/landmode.h"
+#include "navigator/navigator.h"
 
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/action_server/action_server.h>
@@ -43,15 +38,14 @@
  */
 class ModeManager {
 private:
-
-    /// All the available modes
-    std::unordered_map<ModeType, std::unique_ptr<Mode>> modes;
-
     /// The mode we are currently on
-    Mode* curr_mode;
+    mavsdk::ActionServer::FlightMode curr_mode;
 
     /// Vehicle instance to utilize
     Vehicle& vehicle;
+
+    /// Navigator instance to utilize
+    Navigator _navigator;
 
     /// Action server instance to utilize
     mavsdk::ActionServer& action;
@@ -80,7 +74,7 @@ private:
      * @param new_mode_type The mode type we want to change to
      * @return true if the transition is valid, false otherwise
      */
-    bool isValidTransition(ModeType new_mode_type);
+    bool isValidTransition(mavsdk::ActionServer::FlightMode new_mode_type);
 
     /**
      * @brief Main control loop
@@ -100,7 +94,7 @@ private:
      * @param new_mode_type The mode to switch to
      * @return true if transition successful
      */
-    bool change_mode_internal(ModeType new_mode_type);
+    bool change_mode_internal(mavsdk::ActionServer::FlightMode new_mode_type);
 
     /**
      * @brief get the next mode type based on the current one
@@ -111,27 +105,7 @@ private:
      * @param current Current mode type
      * @return Next mode type
      */
-    ModeType get_next_mode(ModeType current);
-
-    /**
-     * @brief map FlightMode enum to our ModeType
-     * 
-     * Used to simplify internal mode switching operations
-     * 
-     * @return The corresponding modetype
-     */
-    ModeType to_modetype(mavsdk::ActionServer::FlightMode mode);
-
-    /**
-     * @brief Maps our custom modes to the FlightMode enum for mavlink communication
-     * 
-     * MAVSDK internally uses px4's custom modes, so we map our mode's to 
-     * action server's Flight mode enum, which is then handled internally by MAVSDK 
-     * with the px4's custom modes.
-     * 
-     * @return the matching px4 custom mode
-     */
-    mavsdk::ActionServer::FlightMode to_action_server_mode(ModeType mode) const;
+    mavsdk::ActionServer::FlightMode get_next_mode(mavsdk::ActionServer::FlightMode current);
 
 public:
 

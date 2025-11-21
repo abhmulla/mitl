@@ -10,7 +10,6 @@
 
 #include <memory>
 
-#include "mode/mode.h"
 #include "controller.h"
 
 #include <mavsdk/mavsdk.h>
@@ -18,20 +17,6 @@
 #include <mavsdk/plugins/action_server/action_server.h>
 #include <mavsdk/plugins/mavlink_direct/mavlink_direct.h>
 #include <mavsdk/plugins/telemetry_server/telemetry_server.h>
-
-/**
- * @brief The states our vehicle can be in
- * 
- * This enum defines possible states our vehicle can be in, 
- * which are used in managing the vehicles mode. 
- */
-enum State {
-    Ground,  ///< The vehicle is on the ground
-    Takeoff, ///< The vehicle is taking off
-    Hold, ///< The vehicle is unmoving in the air
-    Heading, ///< The vehicle is heading to a waypoint
-    Land ///< The vehicle is landing
-};
 
 class Vehicle {
 private:
@@ -55,7 +40,7 @@ private:
     bool armed = false;
 
     /// The current mode this vehicle is in
-    ModeType curr_mode;
+    mavsdk::ActionServer::FlightMode curr_mode;
 
     /// Pointer to the controller object
     std::unique_ptr<Controller> controller;
@@ -125,5 +110,5 @@ public:
      *
      * @param mode The new mode
      */
-    void set_mode(ModeType mode);
+    void set_mode(mavsdk::ActionServer::FlightMode mode);
 };

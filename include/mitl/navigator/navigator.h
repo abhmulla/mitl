@@ -8,6 +8,10 @@
 
 #pragma once
 
+/**
+ * @brief Provides waypoint for navigation based on 
+ * the current mode of the vehicle.
+ */
 class Navigator {
 
 };

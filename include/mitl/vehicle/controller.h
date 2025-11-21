@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "navigator.h"
-
 /**
  * @brief This class takes care of the control loops,
  * it knows which PID loops to run and the state of 

@@ -3,4 +3,4 @@
  * @author Abdulelah Mulla
  */
 
-#include "navigator.h"
+#include "navigator/navigator.h"

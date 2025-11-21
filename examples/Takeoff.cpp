@@ -27,7 +27,7 @@ int main() {
 
     if (conn_result != mavsdk::ConnectionResult::Success) {
         std::cerr << "Connection failed: " << connection_url << '\n';
-        return false;
+        return 0;
     }
 
     std::promise<std::shared_ptr<mavsdk::System>> prom;
@@ -58,7 +58,7 @@ int main() {
     auto system = fut.get();
     if (!system) {
         std::cerr << "Failed to connect to the drone." << '\n';
-        return false;
+        return 0;
     }
 
     // Remove system callback:
@@ -67,7 +67,7 @@ int main() {
 
     if (!system->is_connected()) {
         std::cerr << "System is not connected!" << '\n';
-        return false;
+        return 0;
     }
 
     auto action = mavsdk::Action{system};
