@@ -15,6 +15,7 @@ add_library(${PROJECT_NAME} STATIC
     src/mavlink_interface.cpp
     src/mode_manager.cpp
     src/navigator/navigator.cpp
+    src/mode/takeoff.cpp
     src/vehicle/vehicle.cpp
     src/vehicle/controller.cpp
 )
