@@ -19,22 +19,27 @@ private:
     uint8_t _state_id{0};
 public:
     /**
-	 * This function is called while the mode is inactive
+     * @brief This function tells the mode if it is active or not
+     */
+    void run(bool active);
+
+    /**
+	 * @brief This function is called while the mode is inactive
 	 */
 	virtual void on_inactive();
 
 	/**
-	 * This function is called one time when mode becomes active, pos_sp_triplet must be initialized here
+	 * @brief This function is called one time when mode becomes active, pos_sp_triplet must be initialized here
 	 */
 	virtual void on_activation();
 
 	/**
-	 * This function is called one time when mode becomes inactive
+	 * @brief This function is called one time when mode becomes inactive
 	 */
 	virtual void on_inactivation();
 
 	/**
-	 * This function is called while the mode is active
+	 * @brief This function is called while the mode is active
 	 */
 	virtual void on_active();
 };
