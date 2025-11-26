@@ -4,6 +4,20 @@
  */
 
 #include "navigator/navigator.h"
+#include "morb.h"
+#include "position.h"
+
+Navigator::Navigator(Morb* morb): _morb(morb) {
+    /// Initialize mode array
+    _modes[0] = &_takeoff;
+    _modes[1] = &_hold;
+    _modes[2] = &_land;
+
+    /// Subscribe
+    _morb->subscribe<Position>("position", [this](const Position &pos) {
+        update_position(pos);
+    });
+}
 
 void Navigator::run() {
     /// Iterate through mode list and set appropriately
@@ -13,4 +27,13 @@ void Navigator::run() {
         }
     }
     /// Publish updates
+    if (_pos_updated) {
+        _morb->publish<Position>("position", _pos);
+        _pos_updated = false;
+    }
+}
+
+void Navigator::update_position(const Position &pos) {
+    _pos = pos;
+    _pos_updated = true;
 }
