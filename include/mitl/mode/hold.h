@@ -8,6 +8,16 @@
 
 #include "mode/mode.h"
 
+/// TODO:
 class Hold : public Mode {
 
+    void on_activation() override;
+
+    void on_active() override;
+
+    void on_inactivation() override;
+
+    void on_inactive() override;
+
+    bool is_complete() const override;
 };

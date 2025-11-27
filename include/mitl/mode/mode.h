@@ -26,20 +26,25 @@ public:
     /**
 	 * @brief This function is called while the mode is inactive
 	 */
-	virtual void on_inactive();
+	virtual void on_inactive() = 0;
 
 	/**
 	 * @brief This function is called one time when mode becomes active, pos_sp_triplet must be initialized here
 	 */
-	virtual void on_activation();
+	virtual void on_activation() = 0;
 
 	/**
 	 * @brief This function is called one time when mode becomes inactive
 	 */
-	virtual void on_inactivation();
+	virtual void on_inactivation() = 0;
 
 	/**
 	 * @brief This function is called while the mode is active
 	 */
-	virtual void on_active();
+	virtual void on_active() = 0;
+
+	/**
+	 * @brief Is this mode done?
+	 */
+	virtual bool is_complete() const = 0;
 };

@@ -9,12 +9,62 @@
 #pragma once
 
 #include "mode.h"
+#include "morb.h"
+#include "position.h"
+
+/**
+ * @brief Enum defining current takeoff state
+ */
+enum class TakeoffState {
+    INIT,
+    CLIMBING,
+    COMPLETE
+};
 
 /**
  * @brief Executes takeoff logic and updates position.
  */
 class Takeoff: public Mode {
+private:
+    Morb *_morb;
+
+    /// Takeoff parameters
+    Position _target_pos{};      // Target position to reach
+    Position _current_pos{};     // Current position
+    float _takeoff_alt_amsl{0};  // Target altitude AMSL
+
+    /// State tracking
+    TakeoffState _state{TakeoffState::INIT};
+
+    /// Completion threshold
+    const float ALTITUDE_THRESHOLD = 0.5f;  // meters
+
 public:
+    /// Constructor 
+    Takeoff(Morb *morb);
+
+    /// Disable default constructor
+    Takeoff() = delete;
+    /// Disable Assignment operator
+    Takeoff& operator=(const Takeoff&) = delete;
+
+    /**
+     * @brief Set the initial position and parameters for takeoff.
+     */
     void on_activation() override;
+
+    /**
+     * @brief Update positions for takeoff
+     */
     void on_active() override;
+    
+    /**
+     * @brief Switches mode to INIT
+     */
+    void on_inactivation() override;
+
+    void on_inactive() override;
+
+    /// Check if takeoff is complete
+    bool is_complete() const override;
 };

@@ -21,19 +21,3 @@ void Mode::run(bool active) {
     }
     _active = active;
 }
-
-void Mode::on_activation() {
-
-}
-
-void Mode::on_active() {
-
-}
-
-void Mode::on_inactivation() {
-
-}
-
-void Mode::on_inactive() {
-
-}
