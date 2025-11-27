@@ -17,6 +17,7 @@
 
 #include "mode_manager.h"
 #include "vehicle.h"
+#include "morb.h"
 
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/param_server/param_server.h>
@@ -75,6 +76,9 @@ private:
 
     /// Flag indicating that the vehicle is armed
     std::atomic<bool> _armed{false};
+
+    /// Message bus
+    std::unique_ptr<Morb> _morb;
     
     /**
      * @brief sets up the connection with the GCS
@@ -160,12 +164,7 @@ private:
 public:
 
     MavlinkInterface(
-        std::string url = "udpout://127.0.0.1:14550",
-        mavsdk::ComponentType type = mavsdk::ComponentType::Autopilot): 
-        _connection_url(std::move(url)),
-        _config(type),
-        _mavsdk(_config),
-        _mission_future(_mission_prom.get_future()) {}
+        std::string url = "udpout://127.0.0.1:14550", mavsdk::ComponentType type = mavsdk::ComponentType::Autopilot);
 
     MavlinkInterface(const MavlinkInterface&) = delete;
 

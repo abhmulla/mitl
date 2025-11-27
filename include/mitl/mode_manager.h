@@ -18,6 +18,7 @@
 
 #include "vehicle/vehicle.h"
 #include "navigator/navigator.h"
+#include "morb.h"
 
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/action_server/action_server.h>
@@ -45,7 +46,10 @@ private:
     Vehicle& _vehicle;
 
     /// Navigator instance to utilize
-    // Navigator _navigator;
+    Navigator _navigator;
+
+    /// Message bus
+    Morb *_morb;
 
     /// Action server instance to utilize
     mavsdk::ActionServer& _action;
@@ -109,8 +113,7 @@ private:
 
 public:
 
-    explicit ModeManager(Vehicle& vehicle, mavsdk::ActionServer& action) :
-     _vehicle(vehicle), _action(action) {}
+    explicit ModeManager(Vehicle& vehicle, mavsdk::ActionServer& action, Morb *morb);
 
     ~ModeManager();
 
