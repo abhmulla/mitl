@@ -38,7 +38,6 @@ private:
 
     /// Completion threshold
     const float ALTITUDE_THRESHOLD = 0.5f;  // meters
-
 public:
     /// Constructor 
     Takeoff(Morb *morb);

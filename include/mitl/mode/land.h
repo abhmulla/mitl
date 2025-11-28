@@ -10,6 +10,9 @@
 
 /// TODO:
 class Land : public Mode {
+public:
+    Land();
+
     void on_activation() override;
 
     void on_active() override;

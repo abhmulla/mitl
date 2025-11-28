@@ -16,8 +16,9 @@
 class Mode {
 private:
     bool _active{false};
-    uint8_t _state_id{0};
+
 public:
+    uint8_t state_id{0};
     /**
      * @brief This function tells the mode if it is active or not
      */

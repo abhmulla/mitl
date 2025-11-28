@@ -45,14 +45,14 @@ private:
     /// Vehicle instance to utilize
     Vehicle& _vehicle;
 
-    /// Navigator instance to utilize
-    Navigator _navigator;
+    /// Action server instance to utilize
+    mavsdk::ActionServer& _action;
 
     /// Message bus
     Morb *_morb;
 
-    /// Action server instance to utilize
-    mavsdk::ActionServer& _action;
+    /// Navigator instance to utilize
+    Navigator _navigator;
 
     /// Control thread running flag
     std::atomic<bool> _running;

@@ -5,6 +5,10 @@
 
 #include "mode/hold.h"
 
+Hold::Hold() {
+    state_id = 1;
+}
+
 void Hold::on_activation() {
 
 }

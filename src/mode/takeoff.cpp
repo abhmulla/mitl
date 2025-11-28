@@ -11,7 +11,7 @@
 Takeoff::Takeoff(Morb *morb) :
     _morb(morb)
 {
-
+    state_id = 0;
 }
 
 void Takeoff::on_activation() {
@@ -57,6 +57,9 @@ void Takeoff::on_active() {
 
 void Takeoff::on_inactivation() {
     _state = TakeoffState::INIT;
+}
+
+void Takeoff::on_inactive() {
 }
 
 bool Takeoff::is_complete() const {

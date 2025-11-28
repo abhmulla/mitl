@@ -8,6 +8,15 @@
 #include <iostream>
 
 
+ModeManager::ModeManager(Vehicle& vehicle, mavsdk::ActionServer& action, Morb *morb) :
+     _vehicle(vehicle), 
+     _action(action),
+     _morb(morb),
+     _navigator(_morb) 
+     {
+
+     }
+
 /// Destructor
 ModeManager::~ModeManager() {
     stop();
@@ -17,10 +26,14 @@ void ModeManager::initialize_modes() {
     std::cout << "[ModeManager] Initializing modes..." << std::endl;
     /// Start in Ground mode
     _curr_mode = mavsdk::ActionServer::FlightMode::Ready;
-/// TODO:
 
-    //curr_mode->enter();
-    //navigator->enter(curr_mode)
+    /// Subscribe to mode completion events
+    _morb->subscribe<std::string>("mode_complete", [this](const std::string& mode) {
+        /// Handle transitions
+        if (mode == "takeoff") {
+            change_mode_internal(mavsdk::ActionServer::FlightMode::Hold);
+        }
+    });
 
     /// Update vehicle's mode for telemetry
     _vehicle.set_mode(mavsdk::ActionServer::FlightMode::Ready);
@@ -53,15 +66,7 @@ void ModeManager::control_loop() {
         {
             /// Lock mutex for the duration of this update cycle
             std::lock_guard<std::mutex> lock(_mutex);
-            // if (curr_mode != nullptr) {
-            //     /// Run current mode logic
-            //     curr_mode->update();
-            //     /// Check if mode is complete and auto-transition
-            //     if (curr_mode->is_complete()) {
-            //         ModeType next = get_next_mode(curr_mode->get_type());
-            //         change_mode_internal(next);
-            //     }
-            // }
+            _navigator.run();
         }
         /// We release the mutex
         /// Sleep for remainder of control period to maintain fixed rate
@@ -127,11 +132,8 @@ bool ModeManager::change_mode_internal(mavsdk::ActionServer::FlightMode new_mode
     }
     /// Perform transition
     _action.set_flight_mode(new_mode_type);
-// TODO:
-    // curr_mode = modes[new_mode_type].get();
-    // curr_mode->enter();
-    // tell the mode change either with a message or through navigator
-    /// Update vehicle's mode for telemetry
+    _navigator.set_mode(new_mode_type);
+    _curr_mode = new_mode_type;
     _vehicle.set_mode(new_mode_type);
     return true;
 }

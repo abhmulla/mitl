@@ -10,6 +10,8 @@
 
 /// TODO:
 class Hold : public Mode {
+public:
+    Hold();
 
     void on_activation() override;
 

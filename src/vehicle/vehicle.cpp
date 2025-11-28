@@ -6,6 +6,15 @@
 #include "vehicle/vehicle.h"
 #include <iostream>
 
+Vehicle::Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_ptr<mavsdk::System> system, Morb* morb):
+    _server(server), 
+    _system(system),
+    _morb(morb) 
+    {
+        _telem = std::make_unique<mavsdk::TelemetryServer>(server);
+        _mavdirect = std::make_unique<mavsdk::MavlinkDirect>(system);
+    }
+
 /// TODO: Implement
 bool Vehicle::is_armed() {
     return _armed;

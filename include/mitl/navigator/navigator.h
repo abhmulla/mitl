@@ -16,6 +16,7 @@
 #include "position.h"
 
 #include <mavsdk/mavsdk.h>
+#include <mavsdk/plugins/action_server/action_server.h>
 
 /**
  * Number of modes we are using
@@ -31,17 +32,16 @@ private:
     Mode *_curr_mode{nullptr};  // pointer to the current mode
     Mode *_modes[MODE_ARRAY_SIZE] {}; // pointer to an array of modes
 
+    /// Message bus
+    Morb* _morb;
+
     /// Our modes
     Takeoff _takeoff;
     Hold _hold;
     Land _land;
 
-    /// Message bus
-    Morb* _morb;
-
     /// Position stuff
     Position _pos{};
-    bool _pos_updated{false};
 
 public:
     /// Constructor
@@ -54,4 +54,12 @@ public:
     void run();
 
     void update_position(const Position &pos);
+
+    /**
+     * @brief Update the flight mode
+     * @param mode flight mode to update to
+     * 
+     * Currently only supports Takeoff, Hold, and Land
+     */
+    void set_mode(mavsdk::ActionServer::FlightMode mode);
 };

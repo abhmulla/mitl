@@ -28,7 +28,7 @@ public:
         _subscribers[topic] = [callback](const void* data) {
             const T* typed = static_cast<const T*>(data);
             callback(*typed);
-        }
+        };
     }
 
     template<typename T>

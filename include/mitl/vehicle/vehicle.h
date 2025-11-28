@@ -11,12 +11,15 @@
 #include <memory>
 
 #include "controller.h"
+#include "position.h"
 
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/server_component.h>
 #include <mavsdk/plugins/action_server/action_server.h>
 #include <mavsdk/plugins/mavlink_direct/mavlink_direct.h>
 #include <mavsdk/plugins/telemetry_server/telemetry_server.h>
+
+class Morb;
 
 class Vehicle {
 private:
@@ -45,6 +48,12 @@ private:
     /// Pointer to the controller object
     std::unique_ptr<Controller> _controller;
 
+    /// Message bus
+    Morb *_morb;
+
+    /// Current position estimate
+    Position _position;
+
     /// Vehicle State, HARDCODED FOR NOW
     mavsdk::TelemetryServer::Position _pos{42.7161389, -84.50325, 0.f, 0.f};
     mavsdk::TelemetryServer::PositionVelocityNed _pos_vel{{0,0,0},{0,0,0}};
@@ -55,11 +64,7 @@ private:
     mavsdk::TelemetryServer::Battery _battery{};
 
 public:
-    explicit Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_ptr<mavsdk::System> system):
-    _server(server), _system(system) {
-        _telem = std::make_unique<mavsdk::TelemetryServer>(server);
-        _mavdirect = std::make_unique<mavsdk::MavlinkDirect>(system);
-    }
+    explicit Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_ptr<mavsdk::System> system, Morb* morb);
 
     /**
      * @brief arm the vehicle
