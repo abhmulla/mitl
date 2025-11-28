@@ -19,6 +19,7 @@ add_library(${PROJECT_NAME} STATIC
     src/mode/takeoff.cpp
     src/mode/hold.cpp
     src/mode/land.cpp
+    src/mode/active.cpp
     src/vehicle/vehicle.cpp
     src/vehicle/controller.cpp
 )

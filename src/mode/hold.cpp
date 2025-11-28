@@ -6,7 +6,7 @@
 #include "mode/hold.h"
 
 Hold::Hold() {
-    state_id = 1;
+    state_id = 2;
 }
 
 void Hold::on_activation() {

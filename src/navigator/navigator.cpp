@@ -25,10 +25,6 @@ Navigator::Navigator(Morb* morb):
 }
 
 void Navigator::run() {
-    /// Only run if we have a valid mode set
-    if (!_curr_mode) {
-        return;
-    }
     /// Iterate through mode list and set appropriately
     for (int i = 0; i < MODE_ARRAY_SIZE; i++) {
         if(_modes[i]) {
@@ -39,10 +35,12 @@ void Navigator::run() {
     if (_curr_mode->is_complete()) {
         /// Signal to ModeManager we're done here
         if (_curr_mode->state_id == 0) {
-            _morb->publish<std::string>("mode_complete", "takeoff");
+            _morb->publish<std::string>("mode_complete", "active");
         } else if (_curr_mode->state_id == 1) {
-             _morb->publish<std::string>("mode_complete", "hold");
+            _morb->publish<std::string>("mode_complete", "takeoff");
         } else if (_curr_mode->state_id == 2) {
+             _morb->publish<std::string>("mode_complete", "hold");
+        } else if (_curr_mode->state_id == 3) {
              _morb->publish<std::string>("mode_complete", "land");
         }
     }
@@ -53,7 +51,9 @@ void Navigator::update_position(const Position &pos) {
 }
 
 void Navigator::set_mode(mavsdk::ActionServer::FlightMode mode) {
-    if (mode == mavsdk::ActionServer::FlightMode::Takeoff) {
+    if (mode == mavsdk::ActionServer::FlightMode::Ready) {
+        _curr_mode = &_active;
+    } else if (mode == mavsdk::ActionServer::FlightMode::Takeoff) {
         _curr_mode = &_takeoff;
     } else if (mode == mavsdk::ActionServer::FlightMode::Hold) {
         _curr_mode = &_hold;

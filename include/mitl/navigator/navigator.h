@@ -12,6 +12,7 @@
 #include "mode/takeoff.h"
 #include "mode/hold.h"
 #include "mode/land.h"
+#include "mode/active.h"
 #include "morb.h"
 #include "position.h"
 
@@ -36,6 +37,7 @@ private:
     Morb* _morb;
 
     /// Our modes
+    Active _active;
     Takeoff _takeoff;
     Hold _hold;
     Land _land;

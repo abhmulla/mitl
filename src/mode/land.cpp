@@ -6,7 +6,7 @@
 #include "mode/land.h"
 
 Land::Land() {
-    state_id = 2;
+    state_id = 3;
 }
 
 void Land::on_activation() {

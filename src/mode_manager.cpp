@@ -26,6 +26,7 @@ void ModeManager::initialize_modes() {
     std::cout << "[ModeManager] Initializing modes..." << std::endl;
     /// Start in Ground mode
     _curr_mode = mavsdk::ActionServer::FlightMode::Ready;
+    _navigator.set_mode(mavsdk::ActionServer::FlightMode::Ready);
 
     /// Subscribe to mode completion events
     _morb->subscribe<std::string>("mode_complete", [this](const std::string& mode) {
