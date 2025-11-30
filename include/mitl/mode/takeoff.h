@@ -9,8 +9,10 @@
 #pragma once
 
 #include "mode.h"
-#include "morb.h"
 #include "position.h"
+
+class Navigator;
+class Morb;
 
 /**
  * @brief Enum defining current takeoff state
@@ -27,10 +29,8 @@ enum class TakeoffState {
 class Takeoff: public Mode {
 private:
     Morb *_morb;
+    Navigator *_navigator;
 
-    /// Takeoff parameters
-    Position _target_pos{};      // Target position to reach
-    Position _current_pos{};     // Current position
     float _takeoff_alt_amsl{0};  // Target altitude AMSL
 
     /// State tracking
@@ -40,7 +40,7 @@ private:
     const float ALTITUDE_THRESHOLD = 0.5f;  // meters
 public:
     /// Constructor 
-    Takeoff(Morb *morb);
+    Takeoff(Morb *morb, Navigator *navigator);
 
     /// Disable default constructor
     Takeoff() = delete;

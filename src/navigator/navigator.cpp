@@ -9,9 +9,9 @@
 #include "morb.h"
 #include "position.h"
 
-Navigator::Navigator(Morb* morb): 
-    _morb(morb), 
-    _takeoff(_morb)
+Navigator::Navigator(Morb* morb):
+    _morb(morb),
+    _takeoff(_morb, this)
 {
     /// Initialize mode array
     _modes[0] = &_takeoff;
@@ -19,9 +19,9 @@ Navigator::Navigator(Morb* morb):
     _modes[2] = &_land;
 
     /// Subscribe
-    _morb->subscribe<Position>("vehicle_position", [this](const Position &pos) {
-        update_position(pos);
-    });
+    // _morb->subscribe<Position>("vehicle_position", [this](const Position &pos) {
+    //     update_position(pos);
+    // });
 }
 
 void Navigator::run() {
@@ -31,6 +31,13 @@ void Navigator::run() {
             _modes[i]->run(_curr_mode == _modes[i]);
         }
     }
+
+    /// Publish position setpoint if it was updated by the mode
+    if (_position_updated) {
+        _morb->publish<Position>("position_setpoint", _positions.target);
+        _position_updated = false;
+    }
+
     /// Check if the current mode is complete
     if (_curr_mode->is_complete()) {
         /// Signal to ModeManager we're done here
@@ -47,7 +54,7 @@ void Navigator::run() {
 }
 
 void Navigator::update_position(const Position &pos) {
-    _pos = pos;
+    // _pos = pos;
 }
 
 void Navigator::set_mode(mavsdk::ActionServer::FlightMode mode) {

@@ -18,3 +18,12 @@ struct Position {
     float vy;
     float vz;
 };
+
+/**
+ * @brief Data structure holding the current and next
+ * positions.
+ */
+struct PosSet {
+    Position current;
+    Position target;
+};

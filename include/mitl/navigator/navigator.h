@@ -43,7 +43,8 @@ private:
     Land _land;
 
     /// Position stuff
-    Position _pos{};
+    PosSet _positions{};
+    bool _position_updated{false};
 
 public:
     /// Constructor
@@ -56,6 +57,16 @@ public:
     void run();
 
     void update_position(const Position &pos);
+
+    /**
+     * @brief Getters
+     */
+    PosSet *get_position() {return &_positions;}
+
+    /**
+     * @brief Notify navigator that position has been updated
+     */
+    void notify_position_updated() {_position_updated = true;}
 
     /**
      * @brief Update the flight mode

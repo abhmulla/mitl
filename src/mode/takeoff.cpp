@@ -6,31 +6,33 @@
 #include <iostream>
 
 #include "mode/takeoff.h"
+#include "navigator/navigator.h"
 #include "morb.h"
 
-Takeoff::Takeoff(Morb *morb) :
-    _morb(morb)
+Takeoff::Takeoff(Morb *morb, Navigator *navigator) :
+    _morb(morb),
+    _navigator(navigator)
 {
     state_id = 1;
 }
 
 void Takeoff::on_activation() {
-    /// Subscribe to the current position
-    _morb->subscribe<Position>("vehicle_position", [this](const Position &pos){
-        _current_pos = pos;
-    });
+    /// Get position from navigator
+    PosSet *pos =  _navigator->get_position();
+
     /// Get current position for takeoff starting point
-    _target_pos.lat = _current_pos.lat;
-    _target_pos.lon = _current_pos.lon;
-    _target_pos.yaw = _current_pos.yaw;
+    pos->target.lat = pos->current.lat;
+    pos->target.lon = pos->current.lon;
+    pos->target.yaw = pos->current.yaw;
 
     /// Target altitude, Hardcoded to 10m
-    _takeoff_alt_amsl = _current_pos.alt + 10.0f;
+    _takeoff_alt_amsl = pos->current.alt + 10.0f;
+    pos->target.alt = _takeoff_alt_amsl;
 
     /// Initialize velocities to zero
-    _target_pos.vx = 0;
-    _target_pos.vy = 0;
-    _target_pos.vz = -0.5;
+    pos->target.vx = 0;
+    pos->target.vy = 0;
+    pos->target.vz = -0.5;
 
     /// Update state
     _state = TakeoffState::CLIMBING;
@@ -39,19 +41,23 @@ void Takeoff::on_activation() {
 }
 
 void Takeoff::on_active() {
+    /// Get position from navigator
+    PosSet *pos = _navigator->get_position();
+
     if (_state == TakeoffState::CLIMBING) {
-        /// Publish position setpoint
-        _morb->publish<Position>("position_setpoint", _target_pos);
+        /// Notify navigator to publish the position setpoint
+        _navigator->notify_position_updated();
 
         /// Check if we reached our target altitude
-        float alt_error = std::abs(_current_pos.alt - _target_pos.alt);
+        float alt_error = std::abs(pos->current.alt - pos->target.alt);
         if (alt_error < ALTITUDE_THRESHOLD) {
             _state = TakeoffState::COMPLETE;
             std::cout << "[Takeoff] Complete" << std::endl;
         }
     } else if (_state == TakeoffState::COMPLETE) {
-        /// Hold until mode changes
-        _morb->publish<Position>("position_setpoint", _current_pos);
+        /// Hold current position - set target to current
+        pos->target = pos->current;
+        _navigator->notify_position_updated();
     }
 }
 
