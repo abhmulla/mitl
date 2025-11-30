@@ -4,7 +4,7 @@
  */
 
 #include "mode_manager.h"
-#include "vehicle/controller.h"
+#include "controllers/controller.h"
 #include <iostream>
 
 

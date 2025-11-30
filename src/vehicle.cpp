@@ -3,7 +3,7 @@
  * @author Abdulelah Mulla
  */
 
-#include "vehicle/vehicle.h"
+#include "vehicle.h"
 #include <iostream>
 
 Vehicle::Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_ptr<mavsdk::System> system, Morb* morb):

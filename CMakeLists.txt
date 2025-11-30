@@ -20,8 +20,8 @@ add_library(${PROJECT_NAME} STATIC
     src/mode/hold.cpp
     src/mode/land.cpp
     src/mode/active.cpp
-    src/vehicle/vehicle.cpp
-    src/vehicle/controller.cpp
+    src/vehicle.cpp
+    src/controllers/controller.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

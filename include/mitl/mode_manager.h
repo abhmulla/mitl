@@ -16,7 +16,7 @@
 #include <chrono>
 #include <unordered_map>
 
-#include "vehicle/vehicle.h"
+#include "vehicle.h"
 #include "navigator/navigator.h"
 #include "morb.h"
 

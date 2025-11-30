@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "controller.h"
+#include "controllers/controller.h"
 #include "position.h"
 
 #include <mavsdk/mavsdk.h>
