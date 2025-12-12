@@ -11,6 +11,9 @@ option(BUILD_TESTING "Build tests" OFF)
 # Finds MAVSDK when installed system wide.
 find_package(MAVSDK REQUIRED)
 
+find_package(gz-transport13 REQUIRED)
+find_package(gz-msgs10 REQUIRED)
+
 add_library(${PROJECT_NAME} STATIC
     src/mavlink_interface.cpp
     src/mode_manager.cpp
@@ -22,6 +25,7 @@ add_library(${PROJECT_NAME} STATIC
     src/mode/active.cpp
     src/vehicle.cpp
     src/controllers/controller.cpp
+    src/gazebo/gazebo_state.cpp
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -41,8 +45,11 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 # Link external libraries (MAVSDK) to the C++ library
 target_link_libraries(${PROJECT_NAME} PUBLIC
+    gz-msgs10::core
+    gz-transport13::core
     MAVSDK::mavsdk
 )
 
 # add examples
 add_subdirectory(examples/)
+add_subdirectory(test/)

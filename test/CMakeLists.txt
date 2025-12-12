@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(mitlex)
+project(mitlte)
 
 # Define files to be compiled
 set(MISC_FILES
-    main.cpp
-    Takeoff.cpp
+    gazebo_test.cpp
 )
 
 # Build and link all executables:

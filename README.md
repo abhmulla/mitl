@@ -8,3 +8,11 @@ This more of a learning project, but I think the idea is pretty cool. I want MIT
 
 ### MITL?
 From the description, you can tell this is more of a simulator than an autopilot, which is true. This isn't going on actual firmware any time soon... This is why I call it MITL, short for "Mulla In The Loop".
+
+### Dependencies
+
+-[MAVSDK](https://mavsdk.mavlink.io/main/en/cpp/guide/installation.html)
+
+-[gz_transport](https://gazebosim.org/api/transport/15/installation.html)
+
+-[gz_msgs](https://gazebosim.org/api/msgs/11/install.html)
