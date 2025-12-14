@@ -10,38 +10,42 @@
 #include <iostream>
 #include <string>
 #include <thread>
+
 #include <gz/msgs.hh>
 #include <gz/transport.hh>
+#include <catch2/catch_test_macros.hpp>
 
- 
-static std::atomic<bool> g_terminatePub(false);
- 
-void signal_handler(int _signal)
-{
-  if (_signal == SIGINT || _signal == SIGTERM)
-    g_terminatePub = true;
-}
 
-int main() {
+TEST_CASE ("Strings are published", "[publish]") {
     gz::transport::Node node;
-    std::string topic = "/foo";
+
+    const std::string topic = "/mitl_test";
+
+    std::atomic<bool> received{false};
+    std::string receivedData;
+
+    /// Create subscriber and test it
+    std::function<void(const gz::msgs::StringMsg &)> cb = 
+        [&](const gz::msgs::StringMsg &msg)
+        {
+            receivedData = msg.data();
+            received = true;
+        };
+
+    bool sub = node.Subscribe(topic, cb);
+    REQUIRE(sub);
+    
+    /// Advertise and test
     auto pub = node.Advertise<gz::msgs::StringMsg>(topic);
-    if (!pub) {
-        std::cerr << "Error advertising topic [" << topic << "]" << std::endl;
-        return -1;
-    }
-    gz::msgs::StringMsg msg;
-    msg.set_data("HELLO");
-    
-    // Publish messages at 1Hz.
-    while (!g_terminatePub)
-    {
-        if (!pub.Publish(msg))
-        break;
-    
-        std::cout << "Publishing hello on topic [" << topic << "]" << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
-    
-    return 0;
+    REQUIRE(pub);
+
+    /// Publish and test
+    gz::msgs::StringMsg out;
+    out.set_data("HELLO");
+    REQUIRE(pub.Publish(out));
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(2);
+    while (!received && std::chrono::steady_clock::now() < deadline)
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    REQUIRE(received);
+    REQUIRE(receivedData == "HELLO");
 }

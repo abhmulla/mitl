@@ -16,3 +16,5 @@ From the description, you can tell this is more of a simulator than an autopilot
 -[gz_transport](https://gazebosim.org/api/transport/15/installation.html)
 
 -[gz_msgs](https://gazebosim.org/api/msgs/11/install.html)
+
+-[Catch2](https://github.com/catchorg/Catch2/tree/devel)

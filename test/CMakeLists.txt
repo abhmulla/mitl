@@ -1,26 +1,23 @@
-cmake_minimum_required(VERSION 3.25)
-
-project(mitlte)
+project(Test)
 
 # Define files to be compiled
-set(MISC_FILES
+set(TEST_FILES
     gazebo_test.cpp
 )
 
-# Build and link all executables:
+enable_testing()
 
-foreach( utilfile ${MISC_FILES} )
+# Adding the tests target
+add_executable(test ${TEST_FILES})
 
-    # Determine a target name
+# Make catch2 available to this file
+FetchContent_MakeAvailable(Catch2)
 
-    string( REPLACE ".cpp" "" utilname ${utilfile} )
+# Linking test with the Catch2 libraries
+target_link_libraries(test PRIVATE mitl Catch2::Catch2WithMain)
 
-    # Add the executible for this test:
+# Add Catch2 extra modules to the CMAKE_MODULE_PATH
+list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
-    add_executable( ${utilname} ${utilfile} )
-
-    # Link mitl
-
-    target_link_libraries( ${utilname} mitl )
-
-endforeach( utilfile ${MISC_FILES} )
+include(Catch)
+catch_discover_tests(test)

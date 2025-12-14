@@ -8,6 +8,9 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 # Disable MAVSDK testing
 option(BUILD_TESTING "Build tests" OFF)
 
+# Third party libraries
+add_subdirectory(extern)
+
 # Finds MAVSDK when installed system wide.
 find_package(MAVSDK REQUIRED)
 
@@ -51,5 +54,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 )
 
 # add examples
-add_subdirectory(examples/)
-add_subdirectory(test/)
+add_subdirectory(examples)
+add_subdirectory(test)
