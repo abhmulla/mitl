@@ -163,11 +163,17 @@ private:
 
 public:
 
+    /**
+     * Constructor
+     * 
+     * @brief Initializes _connection_url, _config, _mavsdk,
+     * _mission_future, and _morb.
+     */
     MavlinkInterface(
         std::string url = "udpout://127.0.0.1:14550", mavsdk::ComponentType type = mavsdk::ComponentType::Autopilot);
-
+    
+    /// Delete default constructor and assignment operator
     MavlinkInterface(const MavlinkInterface&) = delete;
-
     MavlinkInterface& operator=(const MavlinkInterface&) = delete;
 
     /**

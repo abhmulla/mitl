@@ -3,6 +3,7 @@ project(Test)
 # Define files to be compiled
 set(TEST_FILES
     gazebo_test.cpp
+    mavlink_interface_test.cpp
 )
 
 enable_testing()

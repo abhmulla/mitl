@@ -2,6 +2,8 @@
  * @file gazebo_test.cpp
  * @author Abdulelah Mulla
  * @brief Tests the build of gazebo
+ * @version 0.1
+ * @date 2025-12-14
  */
 
 #include <atomic>
