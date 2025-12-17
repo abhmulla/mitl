@@ -83,6 +83,8 @@ private:
     /**
      * @brief sets up the connection with the GCS
      * 
+     * Configures server object
+     * 
      * @return true if successful
      */
     bool setup_connection();
@@ -165,13 +167,20 @@ public:
 
     /**
      * Constructor
-     * 
+     *
      * @brief Initializes _connection_url, _config, _mavsdk,
      * _mission_future, and _morb.
      */
     MavlinkInterface(
         std::string url = "udpout://127.0.0.1:14550", mavsdk::ComponentType type = mavsdk::ComponentType::Autopilot);
-    
+
+    /**
+     * Destructor
+     *
+     * @brief Ensures all threads are stopped before destruction
+     */
+    ~MavlinkInterface();
+
     /// Delete default constructor and assignment operator
     MavlinkInterface(const MavlinkInterface&) = delete;
     MavlinkInterface& operator=(const MavlinkInterface&) = delete;

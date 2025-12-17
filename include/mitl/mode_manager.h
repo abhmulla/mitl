@@ -159,10 +159,17 @@ public:
 
     /**
      * @brief Performs the landing operations
-     * 
+     *
      * This function accepts the landing request and verifies
      * the request based on the state-machine, and then gives
-     * the job to the LandMode. 
+     * the job to the LandMode.
      */
     void activate_land();
+
+    /**
+     * @brief Get the current flight mode
+     *
+     * @return Current flight mode
+     */
+    mavsdk::ActionServer::FlightMode get_current_mode() const;
 };

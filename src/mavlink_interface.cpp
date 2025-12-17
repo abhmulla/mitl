@@ -12,7 +12,7 @@ using namespace std::chrono_literals;
 
 MavlinkInterface::MavlinkInterface(
     std::string url,
-    mavsdk::ComponentType type): 
+    mavsdk::ComponentType type):
     _connection_url(std::move(url)),
     _config(type),
     _mavsdk(_config),
@@ -20,6 +20,10 @@ MavlinkInterface::MavlinkInterface(
     {
         _morb = std::make_unique<Morb>();
     }
+
+MavlinkInterface::~MavlinkInterface() {
+    stop();
+}
 
 /// Initialize Drone connection via UDP Port
 bool MavlinkInterface::setup_connection() {
@@ -79,20 +83,14 @@ void MavlinkInterface::setup_params() {
     _param->provide_param_int("MY_PARAM", 1);
 }
 
-/// TODO: Implement
 void MavlinkInterface::on_takeoff(mavsdk::ActionServer::Result result, bool in_prog) {
-    std::cout << "HERE: A" << std::endl;
     if (result == mavsdk::ActionServer::Result::Success) {
-        std::cout<< "HERE: B" << std::endl;
-        //pos.relative_altitude_m = 10.f;
         _manager->activate_takeoff();
     }
 }
 
-/// TODO: Implement
 void MavlinkInterface::on_land(mavsdk::ActionServer::Result result, bool in_prog) {
     if (result == mavsdk::ActionServer::Result::Success) {
-        //pos.relative_altitude_m = 0.f;
         _manager->activate_land();
     }
 }
@@ -191,9 +189,11 @@ void MavlinkInterface::run() {
 }
 
 void MavlinkInterface::stop() {
-    _manager->stop();
+    if (_manager) {
+        _manager->stop();
+    }
     _running = false;
     if (_vehicle_thread.joinable()) {
-          _vehicle_thread.join();
+        _vehicle_thread.join();
     }
 }

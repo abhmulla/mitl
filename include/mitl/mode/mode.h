@@ -14,15 +14,12 @@
  * @brief base class for modes
  */
 class Mode {
-private:
-    bool _active{false};
-
 public:
     uint8_t state_id{0};
     /**
      * @brief This function tells the mode if it is active or not
      */
-    void run(bool active);
+    virtual void run(bool active);
 
     /**
 	 * @brief This function is called while the mode is inactive

@@ -33,6 +33,8 @@ private:
 
     float _takeoff_alt_amsl{0};  // Target altitude AMSL
 
+    bool _active{false};
+    
     /// State tracking
     TakeoffState _state{TakeoffState::INIT};
 

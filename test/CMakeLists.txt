@@ -4,6 +4,7 @@ project(Test)
 set(TEST_FILES
     gazebo_test.cpp
     mavlink_interface_test.cpp
+    mode_manager_test.cpp
 )
 
 enable_testing()

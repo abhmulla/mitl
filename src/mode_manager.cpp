@@ -3,9 +3,10 @@
  * @author Abdulelah Mulla
  */
 
+#include <iostream>
+
 #include "mode_manager.h"
 #include "controllers/controller.h"
-#include <iostream>
 
 
 ModeManager::ModeManager(Vehicle& vehicle, mavsdk::ActionServer& action, Morb *morb) :
@@ -26,18 +27,17 @@ void ModeManager::initialize_modes() {
     std::cout << "[ModeManager] Initializing modes..." << std::endl;
     /// Start in Ground mode
     _curr_mode = mavsdk::ActionServer::FlightMode::Ready;
+    _action.set_flight_mode(mavsdk::ActionServer::FlightMode::Ready);
     _navigator.set_mode(mavsdk::ActionServer::FlightMode::Ready);
+    _vehicle.set_mode(mavsdk::ActionServer::FlightMode::Ready);
 
     /// Subscribe to mode completion events
     _morb->subscribe<std::string>("mode_complete", [this](const std::string& mode) {
         /// Handle transitions
         if (mode == "takeoff") {
-            change_mode_internal(mavsdk::ActionServer::FlightMode::Hold);
+            change_mode(mavsdk::ActionServer::FlightMode::Hold);
         }
     });
-
-    /// Update vehicle's mode for telemetry
-    _vehicle.set_mode(mavsdk::ActionServer::FlightMode::Ready);
 
     std::cout << "[ModeManager] All modes initialized, starting in Ground mode" << std::endl;
 }
@@ -147,17 +147,21 @@ bool ModeManager::change_mode(mavsdk::ActionServer::FlightMode mode) {
 void ModeManager::activate_takeoff() {
     std::lock_guard<std::mutex> lock(_mutex);
     /// Check if we need to arm first
-    if (!_vehicle.is_armed()) {
-        if (!_vehicle.is_arming()) {
-            _vehicle.arm();
-        }
-        /// We wait for the next call if arming is not done
-        return;
-    }
+    // if (!_vehicle.is_armed()) {
+    //     if (!_vehicle.is_arming()) {
+    //         _vehicle.arm();
+    //     }
+    //     /// We wait for the next call if arming is not done
+    //     return;
+    // }
     change_mode_internal(mavsdk::ActionServer::FlightMode::Takeoff);
 }
 
 void ModeManager::activate_land() {
     std::lock_guard<std::mutex> lock(_mutex);
-    change_mode(mavsdk::ActionServer::FlightMode::Land);
+    change_mode_internal(mavsdk::ActionServer::FlightMode::Land);
+}
+
+mavsdk::ActionServer::FlightMode ModeManager::get_current_mode() const {
+    return _curr_mode;
 }

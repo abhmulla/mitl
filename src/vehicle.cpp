@@ -47,27 +47,6 @@ void Vehicle::publish_telem() {
     _telem->publish_position(_pos, _vel, _hdg);
     _telem->publish_position_velocity_ned(_pos_vel);
     _telem->publish_raw_gps(_raw_gps, _gps_info);
-
-    /// Publish landed state
-    mavsdk::TelemetryServer::LandedState landed_state;
-    switch(_curr_mode) {
-        case mavsdk::ActionServer::FlightMode::Ready:
-            landed_state = mavsdk::TelemetryServer::LandedState::OnGround;
-            break;
-        case mavsdk::ActionServer::FlightMode::Takeoff:
-            landed_state = mavsdk::TelemetryServer::LandedState::TakingOff;
-            break;
-        case mavsdk::ActionServer::FlightMode::Land:
-            landed_state = mavsdk::TelemetryServer::LandedState::Landing;
-            break;
-        case mavsdk::ActionServer::FlightMode::Hold:
-        case mavsdk::ActionServer::FlightMode::Mission:
-            landed_state = mavsdk::TelemetryServer::LandedState::InAir;
-            break;
-        default:
-            landed_state = mavsdk::TelemetryServer::LandedState::Unknown;
-    }
-    _telem->publish_extended_sys_state(mavsdk::TelemetryServer::VtolState::Mc, landed_state);
 }
 
 /// TODO: Implement
