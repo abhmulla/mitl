@@ -14,6 +14,8 @@
  * @brief base class for modes
  */
 class Mode {
+private:
+	bool _active{false};
 public:
     uint8_t state_id{0};
     /**
