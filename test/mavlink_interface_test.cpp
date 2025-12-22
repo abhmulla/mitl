@@ -42,7 +42,8 @@ TEST_CASE("MavlinkInterface start initializes connections properly", "[MavlinkIn
         }
     });
 
-    MavlinkInterface mav_interface{"udpout://127.0.0.1:14551"};
+    Morb morb;
+    MavlinkInterface mav_interface{&morb, "udpout://127.0.0.1:14551"};
 
     /// Start the mavlink interface
     bool start_result = mav_interface.start();
@@ -67,7 +68,8 @@ TEST_CASE("Takeoff functionality", "[takeoff]") {
     /// Setup MavlinkInterface and GCS connection
     Mavsdk mavsdk_gcs{Mavsdk::Configuration{ComponentType::GroundStation}};
     auto result = mavsdk_gcs.add_any_connection("udpin://127.0.0.1:14552");
-    MavlinkInterface mav_interface{"udpout://127.0.0.1:14552"};
+    Morb morb;
+    MavlinkInterface mav_interface{&morb, "udpout://127.0.0.1:14552"};
     bool start_result = mav_interface.start();
     REQUIRE(start_result);
     mav_interface.run();
@@ -115,7 +117,8 @@ TEST_CASE("Parameters are set correctly", "[parameters]") {
     auto result = mavsdk_gcs.add_any_connection("udpin://127.0.0.1:14553");
     REQUIRE(result == ConnectionResult::Success);
 
-    MavlinkInterface mav_interface{"udpout://127.0.0.1:14553"};
+    Morb morb;
+    MavlinkInterface mav_interface{&morb, "udpout://127.0.0.1:14553"};
     bool start_result = mav_interface.start();
     REQUIRE(start_result);
 
@@ -163,7 +166,8 @@ TEST_CASE("Arm and disarm functionality", "[arm_disarm]") {
     auto result = mavsdk_gcs.add_any_connection("udpin://127.0.0.1:14554");
     REQUIRE(result == ConnectionResult::Success);
 
-    MavlinkInterface mav_interface{"udpout://127.0.0.1:14554"};
+    Morb morb;
+    MavlinkInterface mav_interface{&morb, "udpout://127.0.0.1:14554"};
     bool start_result = mav_interface.start();
     REQUIRE(start_result);
 
@@ -228,7 +232,8 @@ TEST_CASE("Land callback is triggered", "[land]") {
     auto result = mavsdk_gcs.add_any_connection("udpin://127.0.0.1:14555");
     REQUIRE(result == ConnectionResult::Success);
 
-    MavlinkInterface mav_interface{"udpout://127.0.0.1:14555"};
+    Morb morb;
+    MavlinkInterface mav_interface{&morb, "udpout://127.0.0.1:14555"};
     bool start_result = mav_interface.start();
     REQUIRE(start_result);
     mav_interface.run();
@@ -295,7 +300,8 @@ TEST_CASE("Vehicle loop publishes telemetry", "[vehicle_loop]") {
     auto result = mavsdk_gcs.add_any_connection("udpin://127.0.0.1:14557");
     REQUIRE(result == ConnectionResult::Success);
 
-    MavlinkInterface mav_interface{"udpout://127.0.0.1:14557"};
+    Morb morb;
+    MavlinkInterface mav_interface{&morb, "udpout://127.0.0.1:14557"};
     bool start_result = mav_interface.start();
     REQUIRE(start_result);
 
@@ -360,7 +366,8 @@ TEST_CASE("Mission upload functionality", "[mission]") {
     auto result = mavsdk_gcs.add_any_connection("udpin://127.0.0.1:14558");
     REQUIRE(result == ConnectionResult::Success);
 
-    MavlinkInterface mav_interface{"udpout://127.0.0.1:14558"};
+    Morb morb;
+    MavlinkInterface mav_interface{&morb, "udpout://127.0.0.1:14558"};
     bool start_result = mav_interface.start();
     REQUIRE(start_result);
 

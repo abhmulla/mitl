@@ -3,14 +3,15 @@ cmake_minimum_required(VERSION 3.25)
 project(mitlex)
 
 # Define files to be compiled
-set(MISC_FILES
+set(MITL_FILES
     main.cpp
     Takeoff.cpp
+    gazebo.cpp
 )
 
 # Build and link all executables:
 
-foreach( utilfile ${MISC_FILES} )
+foreach( utilfile ${MITL_FILES} )
 
     # Determine a target name
 
@@ -24,4 +25,4 @@ foreach( utilfile ${MISC_FILES} )
 
     target_link_libraries( ${utilname} mitl )
 
-endforeach( utilfile ${MISC_FILES} )
+endforeach( utilfile ${MITL_FILES} )

@@ -9,13 +9,54 @@
 #include <iostream>
 #include <thread>
 #include <atomic>
+#include <string>
+#include <string.h> 
 
+#include "morb.h"
 #include "mavlink_interface.h"
+#include "gazebo/gazebo_state.h"
 
-int main() {
-    std::cout << "Initializing mavlink interface!" << std::endl;
+/**
+ * The main implementation. This serves as the
+ * startup script that launches all modules. When executing
+ * the binary, the program takes two optional arguments.
+ * --world=<name>: Name of the Gazebo world (default: "default")
+ * --vehicle=<name>: Name of the vehicle model (default: "x500_0")
+ */
+int main(int argc, char *argv[]) {
+    /// Parse arguments
+    std::string world = "default";
+    std::string vehicle = "x500_0";
+
+    for (int i = 1; i < argc; i++) {
+        std::string arg(argv[i]);
+
+        if (arg.find("--world=") == 0) {
+            world = arg.substr(8);
+            if (world.empty()) {
+                std::cout << "Error: --world= requires a value" << std::endl;
+                return 1;
+            }
+        } else if (arg.find("--vehicle=") == 0) {
+            vehicle = arg.substr(10);
+            if (vehicle.empty()) {
+                std::cout << "Error: --vehicle= requires a value" << std::endl;
+                return 1;
+            }
+        } else {
+            std::cout << "Unknown argument: " << arg << std::endl;
+            std::cout << "Usage: " << argv[0] << " [--world=<name>] [--vehicle=<name>]" << std::endl;
+            return 1;
+        }
+    }
+    /// Initialize morb
+    Morb morb;
+    /// Initialize gazebo_state
+    GazeboState gazebo_state(&morb, world, vehicle);
+    gazebo_state.activate_subscriptions();
     /// Initialize mavlink interface
-    MavlinkInterface mav_interface;
+    std::cout << "Initializing mavlink interface!" << std::endl;
+    MavlinkInterface mav_interface(&morb);
 
     std::atomic<bool> stop_requested{false};
 

@@ -78,7 +78,7 @@ private:
     std::atomic<bool> _armed{false};
 
     /// Message bus
-    std::unique_ptr<Morb> _morb;
+    Morb* _morb;
     
     /**
      * @brief sets up the connection with the GCS
@@ -172,7 +172,7 @@ public:
      * _mission_future, and _morb.
      */
     MavlinkInterface(
-        std::string url = "udpout://127.0.0.1:14550", mavsdk::ComponentType type = mavsdk::ComponentType::Autopilot);
+        Morb* morb, std::string url = "udpout://127.0.0.1:14550", mavsdk::ComponentType type = mavsdk::ComponentType::Autopilot);
 
     /**
      * Destructor

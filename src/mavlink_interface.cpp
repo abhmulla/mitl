@@ -11,14 +11,15 @@
 using namespace std::chrono_literals;
 
 MavlinkInterface::MavlinkInterface(
-    std::string url,
+    Morb* morb, std::string url,
     mavsdk::ComponentType type):
     _connection_url(std::move(url)),
     _config(type),
     _mavsdk(_config),
-    _mission_future(_mission_prom.get_future())
+    _mission_future(_mission_prom.get_future()),
+    _morb(morb)
     {
-        _morb = std::make_unique<Morb>();
+
     }
 
 MavlinkInterface::~MavlinkInterface() {
@@ -166,9 +167,9 @@ void MavlinkInterface::setup_mission_server() {
 
 bool MavlinkInterface::start() {
     if (!setup_connection()) return false;
-    _vehicle = std::make_unique<Vehicle>(_server, _system, _morb.get());
+    _vehicle = std::make_unique<Vehicle>(_server, _system, _morb);
     _action = std::make_unique<mavsdk::ActionServer>(_server);
-    _manager = std::make_unique<ModeManager>(*_vehicle, *_action, _morb.get());
+    _manager = std::make_unique<ModeManager>(*_vehicle, *_action, _morb);
     _param = std::make_unique<mavsdk::ParamServer>(_server);
     _mission = std::make_unique<mavsdk::MissionRawServer>(_server);
     std::cout<<"Setting up params"<<std::endl;
