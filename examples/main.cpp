@@ -15,6 +15,7 @@
 #include "morb.h"
 #include "mavlink_interface.h"
 #include "gazebo/gazebo_state.h"
+#include "scheduler.h"
 
 /**
  * The main implementation. This serves as the
@@ -51,6 +52,8 @@ int main(int argc, char *argv[]) {
     }
     /// Initialize morb
     Morb morb;
+    /// Start scheduler
+    Scheduler::initialize();
     /// Initialize gazebo_state
     GazeboState gazebo_state(&morb, world, vehicle);
     gazebo_state.activate_subscriptions();

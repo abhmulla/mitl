@@ -27,6 +27,7 @@ add_library(${PROJECT_NAME} STATIC
     src/mode/land.cpp
     src/mode/active.cpp
     src/vehicle.cpp
+    src/scheduler.cpp
     src/controllers/controller.cpp
     src/gazebo/gazebo_state.cpp
 )

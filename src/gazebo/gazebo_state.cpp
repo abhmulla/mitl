@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "gazebo/gazebo_state.h" 
+#include "scheduler.h"
 
 /// Constructor
 GazeboState::GazeboState(Morb* morb, std::string world, std::string vehicle) :
@@ -82,7 +83,11 @@ void GazeboState::publish_actuator() {
 /// Callbacks
 
 void GazeboState::clock_callback(const gz::msgs::Clock &msg) {
-    std::cout << "In clock callback: " << std::endl;
+    /// Convert timespec to absolute time
+    uint64_t time_mcs = (uint64_t)msg.sim().sec() * 1000000;
+    time_mcs += (uint64_t)(msg.sim().nsec() / 1000);
+    /// Set time
+    Scheduler::initialize().set_time(time_mcs);
 }
 
 void GazeboState::airspeed_callback(const gz::msgs::AirSpeed &msg) {

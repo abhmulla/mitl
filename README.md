@@ -18,3 +18,6 @@ From the description, you can tell this is more of a simulator than an autopilot
 -[gz_msgs](https://gazebosim.org/api/msgs/11/install.html)
 
 -[Catch2](https://github.com/catchorg/Catch2/tree/devel)
+
+## License
+This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
