@@ -8,6 +8,7 @@
 #include "navigator/navigator.h"
 #include "morb.h"
 #include "position.h"
+#include "log.h"
 
 Navigator::Navigator(Morb* morb):
     _morb(morb),
@@ -22,6 +23,11 @@ Navigator::Navigator(Morb* morb):
     // _morb->subscribe<Position>("vehicle_position", [this](const Position &pos) {
     //     update_position(pos);
     // });
+    mitl_log << "[Navigator] Initialized Navigator" << std::endl;
+}
+
+Navigator::~Navigator() {
+    mitl_log << "[Navigator] Destroyed Navigator" << std::endl;
 }
 
 void Navigator::run() {

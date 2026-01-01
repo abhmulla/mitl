@@ -8,12 +8,18 @@
 #include "mode/takeoff.h"
 #include "navigator/navigator.h"
 #include "morb.h"
+#include "log.h"
 
 Takeoff::Takeoff(Morb *morb, Navigator *navigator) :
     _morb(morb),
     _navigator(navigator)
 {
     state_id = 1;
+    mitl_log << "[Takeoff] Initialized Takeoff" << std::endl;
+}
+
+Takeoff::~Takeoff() {
+    mitl_log << "[Takeoff] Destroyed Takeoff" << std::endl;
 }
 
 void Takeoff::on_activation() {
@@ -37,7 +43,7 @@ void Takeoff::on_activation() {
     /// Update state
     _state = TakeoffState::CLIMBING;
 
-    std::cout << "[Takeoff] Activated" << std::endl;
+    mitl_log << "[Takeoff] Activated" << std::endl;
 }
 
 void Takeoff::on_active() {
@@ -52,7 +58,7 @@ void Takeoff::on_active() {
         float alt_error = std::abs(pos->current.alt - pos->target.alt);
         if (alt_error < ALTITUDE_THRESHOLD) {
             _state = TakeoffState::COMPLETE;
-            std::cout << "[Takeoff] Complete" << std::endl;
+            mitl_log << "[Takeoff] Complete" << std::endl;
         }
     } else if (_state == TakeoffState::COMPLETE) {
         /// Hold current position - set target to current

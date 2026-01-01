@@ -3,8 +3,10 @@
  * @author Abdulelah Mulla
  */
 
-#include "vehicle.h"
 #include <iostream>
+
+#include "vehicle.h"
+#include "log.h"
 
 Vehicle::Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_ptr<mavsdk::System> system, Morb* morb):
     _server(server), 
@@ -13,7 +15,12 @@ Vehicle::Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_pt
     {
         _telem = std::make_unique<mavsdk::TelemetryServer>(server);
         _mavdirect = std::make_unique<mavsdk::MavlinkDirect>(system);
+        mitl_log << "[Vehicle] Initialzed Vehicle" << std::endl;
     }
+
+Vehicle::~Vehicle() {
+    mitl_log << "[Vehicle] Destroyed Vehicle" << std::endl;
+}
 
 /// TODO: Implement
 bool Vehicle::is_armed() {
@@ -27,7 +34,7 @@ bool Vehicle::is_arming() {
 
 /// TODO: Implement
 void Vehicle::arm() {
-    std::cout << "[Vehicle] Arming requested" << std::endl;
+    mitl_log << "[Vehicle] Arming requested" << std::endl;
     _arming_in_progress = true;
     // TODO: Send actual arm command via MAVSDK
     // For testing, simulate instant arming
@@ -36,7 +43,7 @@ void Vehicle::arm() {
 }
 
 void Vehicle::disarm() {
-    std::cout << "[Vehicle] Disarming requested" << std::endl;
+    mitl_log << "[Vehicle] Disarming requested" << std::endl;
     /// TODO: disarm the vehicle
     _armed = false;
 }

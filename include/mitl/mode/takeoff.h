@@ -41,8 +41,9 @@ private:
     /// Completion threshold
     const float ALTITUDE_THRESHOLD = 0.5f;  // meters
 public:
-    /// Constructor 
+    /// Constructor and destructor
     Takeoff(Morb *morb, Navigator *navigator);
+    ~Takeoff();
 
     /// Disable default constructor
     Takeoff() = delete;

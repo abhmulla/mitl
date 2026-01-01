@@ -65,7 +65,8 @@ private:
 
 public:
     explicit Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_ptr<mavsdk::System> system, Morb* morb);
-
+    ~Vehicle();
+    
     /**
      * @brief arm the vehicle
      */

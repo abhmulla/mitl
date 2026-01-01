@@ -7,12 +7,13 @@
  */
 
 #include "scheduler.h"
+#include "log.h"
 
 /**
  * Constructor
  */
 Scheduler::Scheduler() {
-
+    mitl_log << "[Scheduler] Initialzed Scheduler" << std::endl;
 }
 
 /**
@@ -25,6 +26,7 @@ Scheduler::~Scheduler() {
         _alarms = _alarms->next;
         temp->removed = true;
     }
+    mitl_log << "[Scheduler] Destroyed Scheduler" << std::endl;
 }
 
 Scheduler& Scheduler::initialize() {
@@ -33,6 +35,9 @@ Scheduler& Scheduler::initialize() {
 }
 
 void Scheduler::set_time(uint64_t time_mus) {
+    if (_time_mus == 0 && time_mus > 0) {
+        mitl_log << "[Scheduler] starting at time: " << time_mus << std::endl;
+    }
     _time_mus = time_mus;
     {
         /// Lock linked list mutex

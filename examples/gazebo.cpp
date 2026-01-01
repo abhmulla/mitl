@@ -6,11 +6,14 @@
 
 #include <string>
 #include <chrono>
+
 #include "gazebo/gazebo_state.h"
+#include "scheduler.h"
 #include "morb.h"
 
 int main() {
     std::string world = "default", vehicle = "x500_0";
+    Scheduler::initialize();
     Morb morb;
     GazeboState gazebo_state(&morb, world, vehicle);
     gazebo_state.activate_subscriptions();

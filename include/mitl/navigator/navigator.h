@@ -47,8 +47,9 @@ private:
     bool _position_updated{false};
 
 public:
-    /// Constructor
+    /// Constructor and destructor
     Navigator(Morb* morb);
+    ~Navigator();
 
     /// Disable copy constructor and assignment operator
     Navigator(const Navigator&) = delete;

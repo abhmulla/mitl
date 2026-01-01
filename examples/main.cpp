@@ -10,12 +10,14 @@
 #include <thread>
 #include <atomic>
 #include <string>
+#include <fstream>
 #include <string.h> 
 
 #include "morb.h"
 #include "mavlink_interface.h"
 #include "gazebo/gazebo_state.h"
 #include "scheduler.h"
+#include "log.h"
 
 /**
  * The main implementation. This serves as the
@@ -58,7 +60,6 @@ int main(int argc, char *argv[]) {
     GazeboState gazebo_state(&morb, world, vehicle);
     gazebo_state.activate_subscriptions();
     /// Initialize mavlink interface
-    std::cout << "Initializing mavlink interface!" << std::endl;
     MavlinkInterface mav_interface(&morb);
 
     std::atomic<bool> stop_requested{false};

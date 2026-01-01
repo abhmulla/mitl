@@ -7,6 +7,7 @@
 
 #include "mode_manager.h"
 #include "controllers/controller.h"
+#include "log.h"
 
 
 ModeManager::ModeManager(Vehicle& vehicle, mavsdk::ActionServer& action, Morb *morb) :
@@ -15,16 +16,17 @@ ModeManager::ModeManager(Vehicle& vehicle, mavsdk::ActionServer& action, Morb *m
      _morb(morb),
      _navigator(_morb) 
      {
-
+        mitl_log << "[ModeManager] Initialized ModeManager" << std::endl;
      }
 
 /// Destructor
 ModeManager::~ModeManager() {
     stop();
+    mitl_log << "[ModeManager] destroyed ModeManager" << std::endl;
 }
 
 void ModeManager::initialize_modes() {
-    std::cout << "[ModeManager] Initializing modes..." << std::endl;
+    mitl_log << "[ModeManager] Initializing modes..." << std::endl;
     /// Start in Ground mode
     _curr_mode = mavsdk::ActionServer::FlightMode::Ready;
     _action.set_flight_mode(mavsdk::ActionServer::FlightMode::Ready);
@@ -39,7 +41,7 @@ void ModeManager::initialize_modes() {
         }
     });
 
-    std::cout << "[ModeManager] All modes initialized, starting in Ground mode" << std::endl;
+    mitl_log << "[ModeManager] All modes initialized, starting in Ground mode" << std::endl;
 }
 
 void ModeManager::start() {
@@ -60,7 +62,6 @@ void ModeManager::stop() {
     }
 }
 
-/// BIG TODO: Adust it for the navigator
 void ModeManager::control_loop() {
     while (_running.load()) {
         auto loop_start =std::chrono::high_resolution_clock::now();

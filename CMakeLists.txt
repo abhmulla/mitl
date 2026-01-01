@@ -18,6 +18,7 @@ find_package(gz-transport13 REQUIRED)
 find_package(gz-msgs10 REQUIRED)
 
 add_library(${PROJECT_NAME} STATIC
+    src/log.cpp
     src/mavlink_interface.cpp
     src/mode_manager.cpp
     src/navigator/navigator.cpp
