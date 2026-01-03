@@ -33,10 +33,20 @@ private:
     gz::transport::Node _node;
 
     /// Callbacks
+
+    /**
+     * @brief Used to determine absolute time.
+     * Time is needed for controllers, state estimators, and logging.
+     */
     void clock_callback(const gz::msgs::Clock &msg);
+
+    /**
+     * @brief Position data used in controllers.
+     */
+	void imu_callback(const gz::msgs::IMU &msg);
+
     void airspeed_callback(const gz::msgs::AirSpeed &msg);
 	void air_pressure_callback(const gz::msgs::FluidPressure &msg);
-	void imu_callback(const gz::msgs::IMU &msg);
 	void pose_info_callback(const gz::msgs::Pose_V &msg);
 	void odometry_callback(const gz::msgs::OdometryWithCovariance &msg);
 	void nav_sat_callback(const gz::msgs::NavSat &msg);

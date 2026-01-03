@@ -16,17 +16,17 @@ ModeManager::ModeManager(Vehicle& vehicle, mavsdk::ActionServer& action, Morb *m
      _morb(morb),
      _navigator(_morb) 
      {
-        mitl_log << "[ModeManager] Initialized ModeManager" << std::endl;
+        MITL_LOG::initialize().program_log("[ModeManager] Initialized ModeManager");
      }
 
 /// Destructor
 ModeManager::~ModeManager() {
     stop();
-    mitl_log << "[ModeManager] destroyed ModeManager" << std::endl;
+    MITL_LOG::initialize().program_log("[ModeManager] destroyed ModeManager");
 }
 
 void ModeManager::initialize_modes() {
-    mitl_log << "[ModeManager] Initializing modes..." << std::endl;
+    MITL_LOG::initialize().program_log("[ModeManager] Initializing modes...");
     /// Start in Ground mode
     _curr_mode = mavsdk::ActionServer::FlightMode::Ready;
     _action.set_flight_mode(mavsdk::ActionServer::FlightMode::Ready);
@@ -41,7 +41,7 @@ void ModeManager::initialize_modes() {
         }
     });
 
-    mitl_log << "[ModeManager] All modes initialized, starting in Ground mode" << std::endl;
+    MITL_LOG::initialize().program_log("[ModeManager] All modes initialized, starting in Ground mode");
 }
 
 void ModeManager::start() {

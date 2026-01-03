@@ -21,12 +21,12 @@ MavlinkInterface::MavlinkInterface(
     _mission_future(_mission_prom.get_future()),
     _morb(morb)
     {
-        mitl_log << "[MavlinkInterface] Initialized MavlinkInterface" << std::endl;
+        MITL_LOG::initialize().program_log("[MavlinkInterface] Initialized MavlinkInterface");
     }
 
 MavlinkInterface::~MavlinkInterface() {
     stop();
-    mitl_log << "[MavlinkInterface] Destroyed MavlinkInterface" << std::endl;
+    MITL_LOG::initialize().program_log("[MavlinkInterface] Destroyed MavlinkInterface");
 }
 
 /// Initialize Drone connection via UDP Port
@@ -114,17 +114,17 @@ void MavlinkInterface::vehicle_loop() {
 void MavlinkInterface::on_arm_disarm(mavsdk::ActionServer::Result result, mavsdk::ActionServer::ArmDisarm arm_disarm) {
     if (result == mavsdk::ActionServer::Result::Success) {
         if(arm_disarm.arm) {
-            mitl_log << "[MavlinkInterface] Arming requested" << std::endl;
+            MITL_LOG::initialize().program_log("[MavlinkInterface] Arming requested");
             _vehicle->arm();
             /// Update state to indicate we're armed
             _armed.store(true);
         } else {
-            mitl_log << "[MavlinkInterface] Disarming requested" << std::endl;
+            MITL_LOG::initialize().program_log("[MavlinkInterface] Disarming requested");
             _vehicle->disarm();
             _armed.store(false);
         }
     } else {
-        mitl_log << "[MavlinkInterface] Arm/Disarm request failed: " << result << std::endl;
+        MITL_LOG::initialize().program_log("[MavlinkInterface] Arm/Disarm request failed");
         _armed.store(false);
     }
 }
@@ -150,21 +150,21 @@ void MavlinkInterface::on_incoming_mission(mavsdk::MissionRawServer::Result res,
     if (res != mavsdk::MissionRawServer::Result::Success) {
         std::cerr << "Mission upload failed: " << '\n';
     }
-    mitl_log << "Received Uploaded Mission\n" << plan << std::endl;
+    MITL_LOG::initialize().program_log("Received Uploaded Mission");
 }
 
 void MavlinkInterface::setup_mission_server() {
-    mitl_log << "MissionRawServer created\n";
+    MITL_LOG::initialize().program_log("MissionRawServer created");
     _mission_handle = _mission->subscribe_incoming_mission(
         [this](auto res, auto plan){ this->on_incoming_mission(res, std::move(plan)); });
 
     _mission->subscribe_current_item_changed(
         [](mavsdk::MissionRawServer::MissionItem item) {
-            mitl_log << "Current item changed: " << item << std::endl;
+            MITL_LOG::initialize().program_log("Current item changed");
         });
 
     _mission->subscribe_clear_all([](uint32_t){
-        mitl_log << "Clear All Mission!\n";
+        MITL_LOG::initialize().program_log("Clear All Mission!");
     });
 }
 
@@ -175,13 +175,13 @@ bool MavlinkInterface::start() {
     _manager = std::make_unique<ModeManager>(*_vehicle, *_action, _morb);
     _param = std::make_unique<mavsdk::ParamServer>(_server);
     _mission = std::make_unique<mavsdk::MissionRawServer>(_server);
-    mitl_log <<"Setting up params"<<std::endl;
+    MITL_LOG::initialize().program_log("Setting up params");
     setup_params();
-    mitl_log <<"Setting up action"<<std::endl;
+    MITL_LOG::initialize().program_log("Setting up action");
     setup_actions();
-    mitl_log <<"Setting up mission"<<std::endl;
+    MITL_LOG::initialize().program_log("Setting up mission");
     setup_mission_server();
-    mitl_log <<"Setting up modes"<<std::endl;
+    MITL_LOG::initialize().program_log("Setting up modes");
     _manager->initialize_modes();
     _running = true;
     return true;

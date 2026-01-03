@@ -25,21 +25,21 @@ void GazeboState::activate_subscriptions() {
     if(!_node.Subscribe(clock_string, &GazeboState::clock_callback, this)) {
         std::cerr << "Error subscribing to clock topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to Clock topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to Clock topic");
     }
     /// Pose Info
     std::string pose_string = "/world/" + _world + "/pose/info";
     if(!_node.Subscribe(pose_string, &GazeboState::pose_info_callback, this)) {
         std::cerr << "Error subscribing to pose info topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to pose info topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to pose info topic");
     }
     /// IMU
     std::string imu_string = "/world/" + _world + "/model/" + _vehicle + "/link/base_link/sensor/imu_sensor/imu";
     if(!_node.Subscribe(imu_string, &GazeboState::imu_callback, this)) {
         std::cerr << "Error subscribing to imu topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to imu topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to imu topic");
     }
     /// Mag
     std::string mag_string = "/world/" + _world + "/model/" + _vehicle +
@@ -47,21 +47,21 @@ void GazeboState::activate_subscriptions() {
     if(!_node.Subscribe(mag_string, &GazeboState::mag_callback, this)) {
         std::cerr << "Error subscribing to magnetometer topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to magnetometer topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to magnetometer topic");
     }
     /// Odo
     std::string odometry_string = "/model/" + _vehicle + "/odometry_with_covariance";
     if(!_node.Subscribe(odometry_string, &GazeboState::odometry_callback, this)) {
         std::cerr << "Error subscribing to odometry topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to odometry topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to odometry topic");
     }
     /// LaserScan
     std::string laser_scan_string = "/world/" + _world + "/model/" + _vehicle + "/link/link/sensor/lidar_2d_v2/scan";
     if(!_node.Subscribe(laser_scan_string, &GazeboState::laser_scan_callback, this)) {
         std::cerr << "Error subscribing to laser scan topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to laser scan topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to laser scan topic");
     }
     /// Lidar Sensor
     std::string lidar_sensor_string = "/world/" + _world + "/model/" + _vehicle +
@@ -69,7 +69,7 @@ void GazeboState::activate_subscriptions() {
     if(!_node.Subscribe(lidar_sensor_string, &GazeboState::lidar_callback, this)) {
         std::cerr << "Error subscribing to lidar topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to lidar topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to lidar topic");
     }
     /// Airspeed
     std::string airspeed_string = "/world/" + _world + "/model/" + _vehicle +
@@ -77,7 +77,7 @@ void GazeboState::activate_subscriptions() {
     if(!_node.Subscribe(airspeed_string, &GazeboState::airspeed_callback, this)) {
         std::cerr << "Error subscribing to airspeed topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to airspeed topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to airspeed topic");
     }
     /// Airpressure
     std::string air_pressure_string = "/world/" + _world + "/model/" + _vehicle +
@@ -85,7 +85,7 @@ void GazeboState::activate_subscriptions() {
     if(!_node.Subscribe(air_pressure_string, &GazeboState::air_pressure_callback, this)) {
         std::cerr << "Error subscribing to air pressure topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to air pressure topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to air pressure topic");
     }
     /// Navsat
     std::string nav_sat_string = "/world/" + _world + "/model/" + _vehicle +
@@ -93,7 +93,7 @@ void GazeboState::activate_subscriptions() {
     if(!_node.Subscribe(nav_sat_string, &GazeboState::nav_sat_callback, this)) {
         std::cerr << "Error subscribing to navsat topic" << std::endl;
     } else {
-        mitl_log << "[GazeboState] Subscribed to navsat topic" << std::endl;
+        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to navsat topic");
     }
 }
 

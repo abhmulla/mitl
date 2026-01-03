@@ -15,11 +15,11 @@ Vehicle::Vehicle(std::shared_ptr<mavsdk::ServerComponent> server, std::shared_pt
     {
         _telem = std::make_unique<mavsdk::TelemetryServer>(server);
         _mavdirect = std::make_unique<mavsdk::MavlinkDirect>(system);
-        mitl_log << "[Vehicle] Initialzed Vehicle" << std::endl;
+        MITL_LOG::initialize().program_log("[Vehicle] Initialzed Vehicle");
     }
 
 Vehicle::~Vehicle() {
-    mitl_log << "[Vehicle] Destroyed Vehicle" << std::endl;
+    MITL_LOG::initialize().program_log("[Vehicle] Destroyed Vehicle");
 }
 
 /// TODO: Implement
@@ -34,7 +34,7 @@ bool Vehicle::is_arming() {
 
 /// TODO: Implement
 void Vehicle::arm() {
-    mitl_log << "[Vehicle] Arming requested" << std::endl;
+    MITL_LOG::initialize().program_log("[Vehicle] Arming requested");
     _arming_in_progress = true;
     // TODO: Send actual arm command via MAVSDK
     // For testing, simulate instant arming
@@ -43,7 +43,7 @@ void Vehicle::arm() {
 }
 
 void Vehicle::disarm() {
-    mitl_log << "[Vehicle] Disarming requested" << std::endl;
+    MITL_LOG::initialize().program_log("[Vehicle] Disarming requested");
     /// TODO: disarm the vehicle
     _armed = false;
 }

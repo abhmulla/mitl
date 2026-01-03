@@ -54,6 +54,8 @@ int main(int argc, char *argv[]) {
     }
     /// Initialize morb
     Morb morb;
+    /// Start Logger
+    MITL_LOG::initialize();
     /// Start scheduler
     Scheduler::initialize();
     /// Initialize gazebo_state
