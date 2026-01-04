@@ -13,6 +13,7 @@
  */
 MITL_LOG::MITL_LOG() {
     _program_log.open("program_log");
+    _sensor_log.open("sensor_log");
 }
 
 /**
@@ -28,6 +29,7 @@ MITL_LOG& MITL_LOG::initialize() {
  */
 MITL_LOG::~MITL_LOG() {
     _program_log.close();
+    _sensor_log.close();
 }
 
 void MITL_LOG::program_log(const std::string &msg) {
@@ -35,4 +37,11 @@ void MITL_LOG::program_log(const std::string &msg) {
     const std::lock_guard<std::mutex> lock(_program_mutex);
     /// Log the message
     _program_log << msg << std::endl;
+}
+
+void MITL_LOG::sensor_log(const google::protobuf::Message& msg, std::string label, uint64_t time) {
+    /// Lock mutex
+    const std::lock_guard<std::mutex> lock(_sensor_mutex);
+    /// Log the message
+    _sensor_log << label << ", Time: " << time << ", Message: " << msg.DebugString() << std::endl;
 }

@@ -50,7 +50,6 @@ private:
 	void pose_info_callback(const gz::msgs::Pose_V &msg);
 	void odometry_callback(const gz::msgs::OdometryWithCovariance &msg);
 	void nav_sat_callback(const gz::msgs::NavSat &msg);
-	void lidar_callback(const gz::msgs::LaserScan &msg);
 	void laser_scan_callback(const gz::msgs::LaserScan &msg);
 	void mag_callback(const gz::msgs::Magnetometer &msg);
 public:
@@ -58,6 +57,11 @@ public:
      * Constructor
      */
     GazeboState(Morb* morb, std::string world, std::string vehicle);
+
+    /**
+     * Destructor
+     */
+    ~GazeboState();
 
     /**
      * @brief Subscribes to sensor readings and publishes

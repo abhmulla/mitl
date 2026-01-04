@@ -19,6 +19,13 @@ GazeboState::GazeboState(Morb* morb, std::string world, std::string vehicle) :
 
 }
 
+/// Destructor
+GazeboState::~GazeboState() {
+    for (auto &sub_topic : _node.SubscribedTopics()) {
+		_node.Unsubscribe(sub_topic);
+	}
+}
+
 void GazeboState::activate_subscriptions() {
     /// Clock
     std::string clock_string = "/world/" + _world + "/clock";
@@ -63,14 +70,6 @@ void GazeboState::activate_subscriptions() {
     } else {
         MITL_LOG::initialize().program_log("[GazeboState] Subscribed to laser scan topic");
     }
-    /// Lidar Sensor
-    std::string lidar_sensor_string = "/world/" + _world + "/model/" + _vehicle +
-				   "/link/lidar_sensor_link/sensor/lidar/scan";
-    if(!_node.Subscribe(lidar_sensor_string, &GazeboState::lidar_callback, this)) {
-        std::cerr << "Error subscribing to lidar topic" << std::endl;
-    } else {
-        MITL_LOG::initialize().program_log("[GazeboState] Subscribed to lidar topic");
-    }
     /// Airspeed
     std::string airspeed_string = "/world/" + _world + "/model/" + _vehicle +
 				     "/link/airspeed_link/sensor/air_speed/air_speed";
@@ -112,37 +111,41 @@ void GazeboState::clock_callback(const gz::msgs::Clock &msg) {
 }
 
 void GazeboState::airspeed_callback(const gz::msgs::AirSpeed &msg) {
-
+    uint64_t time = Scheduler::initialize().get_time();
+    MITL_LOG::initialize().sensor_log(msg, "[Airspeed]", time);
 }
 
 void GazeboState::air_pressure_callback(const gz::msgs::FluidPressure &msg) {
-
+    uint64_t time = Scheduler::initialize().get_time();
+    MITL_LOG::initialize().sensor_log(msg, "[Air pressure]", time);
 }
 
 void GazeboState::imu_callback(const gz::msgs::IMU &msg) {
-    
+    uint64_t time = Scheduler::initialize().get_time();
+    MITL_LOG::initialize().sensor_log(msg, "[IMU]", time);
 }
 
 void GazeboState::pose_info_callback(const gz::msgs::Pose_V &msg) {
-
+    uint64_t time = Scheduler::initialize().get_time();
+    MITL_LOG::initialize().sensor_log(msg, "[Pose]", time);
 }
 
 void GazeboState::odometry_callback(const gz::msgs::OdometryWithCovariance &msg) {
-    
+    uint64_t time = Scheduler::initialize().get_time();
+    MITL_LOG::initialize().sensor_log(msg, "[Odometry]", time);
 }
 
 void GazeboState::nav_sat_callback(const gz::msgs::NavSat &msg) {
-    
-}
-
-void GazeboState::lidar_callback(const gz::msgs::LaserScan &msg) {
-    
+    uint64_t time = Scheduler::initialize().get_time();
+    MITL_LOG::initialize().sensor_log(msg, "[NAV SAT]", time);
 }
 
 void GazeboState::laser_scan_callback(const gz::msgs::LaserScan &msg) {
-    
+    uint64_t time = Scheduler::initialize().get_time();
+    MITL_LOG::initialize().sensor_log(msg, "[Laser Scan]", time);
 }
 
 void GazeboState::mag_callback(const gz::msgs::Magnetometer &msg) {
-    
+    uint64_t time = Scheduler::initialize().get_time();
+    MITL_LOG::initialize().sensor_log(msg, "[Magnetometer]", time);
 }

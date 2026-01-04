@@ -13,15 +13,19 @@
 #include <mutex>
 #include <string>
 
+  #include <google/protobuf/message.h>
+
 /**
  * @brief Class for managing logging with thread safety.
  */
 class MITL_LOG {
 private:
     std::ofstream _program_log; // Logs the start of different processes
+    std::ofstream _sensor_log; // Logs sensor data
 
     /// Mutex for accessing shared Log files
     std::mutex _program_mutex; 
+    std::mutex _sensor_mutex;
 
     /**
      * Constructor
@@ -49,4 +53,6 @@ public:
      * @brief Safely logs the message in the program_log file.
      */
     void program_log(const std::string &msg);
+
+    void sensor_log(const google::protobuf::Message& msg, std::string label, uint64_t time);
 };

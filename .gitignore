@@ -9,6 +9,3 @@ build
 
 # Settings
 .vscode
-
-# MAVSDK example
-autopilot_example.cpp
